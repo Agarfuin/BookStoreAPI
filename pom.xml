@@ -11,7 +11,9 @@
   <name>agarfuinbookstore</name>
   <url>http://www.agarfuin.github.io</url>
   <modules>
-    <module>customer</module>
+    <module>user</module>
+      <module>api-gateway</module>
+      <module>eureka-server</module>
   </modules>
 
   <properties>

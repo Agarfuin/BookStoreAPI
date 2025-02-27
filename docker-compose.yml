@@ -1,0 +1,30 @@
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - spring
+  rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring
+  kafka:
+    image: apache/kafka:latest
+    container_name: broker
+    ports:
+      - "9092:9092"
+      - "29092:9092"
+    networks:
+      - spring
+networks:
+  spring:
+    driver: bridge
+
+volumes:
+  pgadmin:

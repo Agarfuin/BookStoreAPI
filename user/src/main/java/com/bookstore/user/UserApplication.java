@@ -1,4 +1,4 @@
-package com.bookstore.customer;
+package com.bookstore.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
