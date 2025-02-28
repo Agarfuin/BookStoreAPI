@@ -1,0 +1,4 @@
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/ApiGatewayApplication.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/config/JwtConfig.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/config/SecurityConfig.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/filter/JwtFilter.java

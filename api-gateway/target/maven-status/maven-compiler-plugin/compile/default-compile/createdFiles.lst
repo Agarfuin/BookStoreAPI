@@ -1,0 +1,4 @@
+com/bookstore/apigateway/ApiGatewayApplication.class
+com/bookstore/apigateway/config/SecurityConfig.class
+com/bookstore/apigateway/config/JwtConfig.class
+com/bookstore/apigateway/filter/JwtFilter.class
