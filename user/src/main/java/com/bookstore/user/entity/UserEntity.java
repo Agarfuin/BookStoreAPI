@@ -39,7 +39,9 @@ public class UserEntity implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  private Boolean isValidated;
+  @Builder.Default
+  @Column(nullable = false)
+  private Boolean isValidated = false;
 
   @CreationTimestamp private Instant createdAt;
   @UpdateTimestamp private Instant updatedAt;

@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private static final String[] WHITE_LIST_URL = {
-    "/api/v1/user/auth/**", "/api/v1/user/hello-world/**",
+    "/api/v1/user/**", "/api/v1/user/hello-world/**",
   };
   private final AuthenticationProvider authenticationProvider;
 
