@@ -1,7 +1,6 @@
 package com.bookstore.clients.user;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +14,6 @@ public interface UserClient {
   @PostMapping("/api/v1/user/validate")
   ValidatedUserDto validateCredentials(@RequestBody LoginRequestDto loginRequestDto);
 
-  @PatchMapping("/api/v1/user/verify")
+  @PostMapping("/api/v1/user/verify")
   void verifyUser(@RequestParam("token") String token);
 }

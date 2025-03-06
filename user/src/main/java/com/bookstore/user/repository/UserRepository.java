@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
   Optional<UserEntity> findByEmail(String email);
 
   @Query(
-      "SELECT u FROM UserEntity u JOIN UserConfirmationEntity uc ON u.id = uc.userId WHERE uc.token = :token")
+      "SELECT u FROM UserEntity u JOIN UserConfirmationEntity uc ON u.id = uc.userId WHERE uc.token = ?1")
   Optional<UserEntity> findByConfirmationToken(String token);
 }

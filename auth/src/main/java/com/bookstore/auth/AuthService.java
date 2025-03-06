@@ -15,9 +15,8 @@ public class AuthService {
 
   public AuthResponseDto signup(SignupRequestDto signupRequestDto) {
     SignupResponseDto signupResponseDto = userClient.createUser(signupRequestDto);
-    return AuthResponseDto.builder()
-        .token(jwtUtil.generateToken(signupResponseDto.getEmail(), "USER"))
-        .build();
+    // TODO: CREATE NOTIFICATION SERVICE AND SEND VERIFICATION EMAIL
+    return AuthResponseDto.builder().token(signupResponseDto.getUserConfirmation()).build();
   }
 
   public AuthResponseDto login(LoginRequestDto loginRequestDto) {
