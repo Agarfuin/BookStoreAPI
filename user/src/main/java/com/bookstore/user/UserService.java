@@ -46,9 +46,9 @@ public class UserService {
             .expirationDate(
                 Date.from(Instant.now().plus(CONFIRMATION_EXPIRATION_HOURS, ChronoUnit.HOURS)))
             .build();
-    userConfirmationRepository.save(userConfirmation);
+    userConfirmationRepository.saveAndFlush(userConfirmation);
 
-    return SignupResponseDto.builder().id(userEntity.getId()).email(userEntity.getEmail()).build();
+    return SignupResponseDto.builder().userConfirmation(userConfirmation.getToken()).build();
   }
 
   public ValidatedUserDto validateCredentials(String email, String password) {
@@ -61,7 +61,12 @@ public class UserService {
                         HttpStatus.NOT_FOUND, "No user found with provided email"));
 
     if (!passwordEncoder.matches(password, userEntity.getPassword())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
+    }
+
+    if (!userEntity.getIsValidated()) {
+      throw new ResponseStatusException(
+          HttpStatus.UNAUTHORIZED, "User not validated. Please verify your email to login");
     }
 
     return ValidatedUserDto.builder()
@@ -70,15 +75,15 @@ public class UserService {
         .build();
   }
 
-  public void verifyUser(String confirmationToken) {
+  public void verifyUser(String token) {
     UserConfirmationEntity userConfirmationEntity =
         userConfirmationRepository
-            .findByToken(confirmationToken)
+            .findByToken(token)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid token"));
 
     UserEntity user =
         userRepository
-            .findByConfirmationToken(confirmationToken)
+            .findByConfirmationToken(token)
             .orElseThrow(
                 () ->
                     new ResponseStatusException(

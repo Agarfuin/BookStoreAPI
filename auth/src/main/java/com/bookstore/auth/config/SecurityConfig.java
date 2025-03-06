@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   public static final String[] WHITELISTED_URLS = {
-    "/api/v1/auth/hello-world/**", "/api/v1/auth/signup/**", "/api/v1/auth/login/**"
+    "/api/v1/auth/hello-world/**", "/api/v1/auth/**"
   };
 
   @Bean

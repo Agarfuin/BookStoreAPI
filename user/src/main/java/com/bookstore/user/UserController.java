@@ -29,7 +29,7 @@ public class UserController {
   }
 
   @PostMapping("/validate")
-  public ResponseEntity<ValidatedUserDto> valdateCredentials(
+  public ResponseEntity<ValidatedUserDto> validateCredentials(
       @RequestBody LoginRequestDto loginRequestDto) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(
@@ -37,9 +37,9 @@ public class UserController {
                 loginRequestDto.getEmail(), loginRequestDto.getPassword()));
   }
 
-  @PatchMapping("/verify")
+  @PostMapping("/verify")
   @ResponseStatus(HttpStatus.OK)
-  public void verifyUser(@RequestParam String token) {
+  public void verifyUser(@RequestParam("token") String token) {
     userService.verifyUser(token);
   }
 }
