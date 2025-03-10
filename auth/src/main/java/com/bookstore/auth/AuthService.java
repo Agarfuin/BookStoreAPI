@@ -3,6 +3,10 @@ package com.bookstore.auth;
 import com.bookstore.auth.dto.AuthResponseDto;
 import com.bookstore.auth.util.JwtUtil;
 import com.bookstore.clients.user.*;
+import com.bookstore.clients.user.dto.LoginRequestDto;
+import com.bookstore.clients.user.dto.SignupRequestDto;
+import com.bookstore.clients.user.dto.SignupResponseDto;
+import com.bookstore.clients.user.dto.ValidatedUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +25,6 @@ public class AuthService {
 
   public AuthResponseDto login(LoginRequestDto loginRequestDto) {
     ValidatedUserDto validatedUser = userClient.validateCredentials(loginRequestDto);
-
     String token = jwtUtil.generateToken(validatedUser.getEmail(), validatedUser.getRole());
     return AuthResponseDto.builder().token(token).build();
   }

@@ -28,6 +28,11 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   public SignupResponseDto createUser(SignupRequestDto signupRequestDto) {
+    if (userRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "User with provided email already exists");
+    }
+
     UserEntity userEntity =
         UserEntity.builder()
             .firstName(signupRequestDto.getFirstName())

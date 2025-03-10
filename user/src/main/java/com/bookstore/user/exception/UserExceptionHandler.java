@@ -1,8 +1,6 @@
-package com.bookstore.auth.exception;
+package com.bookstore.user.exception;
 
 import io.jsonwebtoken.JwtException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,19 +18,17 @@ import org.springframework.web.server.ResponseStatusException;
 @ControllerAdvice
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class UserExceptionHandler {
 
   @ExceptionHandler(value = Exception.class)
-  public ResponseEntity<Object> defaultErrorHandler(
-      HttpServletRequest req, HttpServletResponse res, Exception e) {
+  public ResponseEntity<Object> defaultErrorHandler(Exception e) {
     return new ResponseEntity<>(
         ExceptionResponse.builder().time(LocalDateTime.now()).error(e.getMessage()).build(),
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler(value = MethodArgumentNotValidException.class)
-  public ResponseEntity<Object> methodArgumentNotValidHandler(
-      HttpServletRequest req, HttpServletResponse res, MethodArgumentNotValidException e) {
+  public ResponseEntity<Object> methodArgumentNotValidHandler(MethodArgumentNotValidException e) {
 
     Map<String, String> errorMap = new HashMap<>();
     e.getBindingResult()
@@ -53,16 +49,14 @@ public class GlobalExceptionHandler {
         AuthenticationException.class,
         InsufficientAuthenticationException.class
       })
-  public ResponseEntity<Object> jwtExceptionHandler(
-      HttpServletRequest req, HttpServletResponse res, Exception e) {
+  public ResponseEntity<Object> jwtExceptionHandler(Exception e) {
     return new ResponseEntity<>(
         ExceptionResponse.builder().error(e.getMessage()).time(LocalDateTime.now()).build(),
         HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(value = ResponseStatusException.class)
-  public ResponseEntity<Object> responseStatusExceptionHandler(
-      HttpServletRequest req, HttpServletResponse res, ResponseStatusException ex) {
+  public ResponseEntity<Object> responseStatusExceptionHandler(ResponseStatusException ex) {
     return new ResponseEntity<>(
         ExceptionResponse.builder().error(ex.getReason()).time(LocalDateTime.now()).build(),
         ex.getStatusCode());
