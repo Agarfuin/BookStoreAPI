@@ -1,8 +1,8 @@
 package com.bookstore.auth;
 
 import com.bookstore.auth.dto.AuthResponseDto;
-import com.bookstore.clients.user.LoginRequestDto;
-import com.bookstore.clients.user.SignupRequestDto;
+import com.bookstore.clients.user.dto.LoginRequestDto;
+import com.bookstore.clients.user.dto.SignupRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

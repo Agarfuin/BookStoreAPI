@@ -1,4 +1,4 @@
-package com.bookstore.user.exception;
+package com.bookstore.apigateway.exception;
 
 import io.jsonwebtoken.JwtException;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 @ControllerAdvice
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class ApiGatewayExceptionHandler {
 
   @ExceptionHandler(value = Exception.class)
   public ResponseEntity<Object> defaultErrorHandler(Exception e) {

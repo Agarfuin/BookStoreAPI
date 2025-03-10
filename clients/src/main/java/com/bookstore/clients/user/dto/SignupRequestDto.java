@@ -1,4 +1,4 @@
-package com.bookstore.clients.user;
+package com.bookstore.clients.user.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDto {
+public class SignupRequestDto {
 
+  @NotNull private String firstName;
+  @NotNull private String lastName;
   @NotNull private String email;
   @NotNull private String password;
 }
