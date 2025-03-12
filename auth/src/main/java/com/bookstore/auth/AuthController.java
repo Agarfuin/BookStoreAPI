@@ -15,7 +15,7 @@ public class AuthController {
 
   private final AuthService authService;
 
-  @GetMapping("/hello-world")
+  @GetMapping({"/public/hello-world", "/protected/hello-world"})
   @ResponseStatus(HttpStatus.OK)
   public String helloWorld() {
     return "Hello World";

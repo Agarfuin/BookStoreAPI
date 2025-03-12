@@ -43,12 +43,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
     String token = extractToken(request);
     if (token == null || !jwtUtil.validateToken(token)) {
-      response.setStatus(HttpStatus.UNAUTHORIZED.value());
-      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-      response.getWriter().write("{\"message\":\"Invalid or missing token\"}");
+      unauthorized(response, "Invalid or missing token");
       return;
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private void unauthorized(HttpServletResponse response, String message) throws IOException {
+    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response
+        .getWriter()
+        .write(String.format("{\"error\":\"Unauthorized\", \"message\":\"%s\"}", message));
   }
 }

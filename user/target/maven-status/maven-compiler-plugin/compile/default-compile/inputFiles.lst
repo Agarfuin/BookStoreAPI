@@ -3,6 +3,7 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/UserService.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/config/SecurityConfig.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/config/UserConfig.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/dto/ExceptionResponseDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/dto/LoginRequestDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/dto/SignupRequestDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/dto/SignupResponseDto.java
@@ -10,7 +11,6 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/entity/UserConfirmationEntity.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/entity/UserEntity.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/enums/Role.java
-/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/exception/ExceptionResponse.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/exception/UserExceptionHandler.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/repository/UserConfirmationRepository.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/repository/UserRepository.java
