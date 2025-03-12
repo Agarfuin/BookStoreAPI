@@ -6,6 +6,7 @@ com/bookstore/clients/user/dto/LoginRequestDto$LoginRequestDtoBuilder.class
 com/bookstore/clients/user/dto/ValidatedUserDto.class
 com/bookstore/clients/user/dto/LoginRequestDto.class
 com/bookstore/clients/user/dto/SignupResponseDto.class
+com/bookstore/clients/config/FeignConfig.class
 com/bookstore/clients/user/dto/SignupRequestDto$SignupRequestDtoBuilder.class
 com/bookstore/clients/exception/ExceptionResponse.class
 com/bookstore/clients/exception/ExceptionResponse$ExceptionResponseBuilder.class
