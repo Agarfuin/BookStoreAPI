@@ -1,5 +1,6 @@
 package com.bookstore.clients.user.dto;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignupResponseDto {
 
-  private String userConfirmation;
+  private UUID userId;
+  private String firstName;
+  private String email;
+  private String userConfirmationToken;
 }

@@ -26,7 +26,7 @@ public class AuthController {
     return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(signupRequestDto));
   }
 
-  @PostMapping("/verify")
+  @GetMapping("/verify")
   public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
     authService.verifyEmail(token);
     return ResponseEntity.status(HttpStatus.OK).body("Email verified!");

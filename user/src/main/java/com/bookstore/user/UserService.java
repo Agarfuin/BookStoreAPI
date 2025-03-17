@@ -53,7 +53,12 @@ public class UserService {
             .build();
     userConfirmationRepository.saveAndFlush(userConfirmation);
 
-    return SignupResponseDto.builder().userConfirmation(userConfirmation.getToken()).build();
+    return SignupResponseDto.builder()
+        .userId(userEntity.getId())
+        .firstName(userEntity.getFirstName())
+        .email(userEntity.getEmail())
+        .userConfirmationToken(userConfirmation.getToken())
+        .build();
   }
 
   public ValidatedUserDto validateCredentials(String email, String password) {

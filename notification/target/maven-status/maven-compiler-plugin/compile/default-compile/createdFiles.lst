@@ -1,0 +1,7 @@
+com/bookstore/notification/repository/NotificationRepository.class
+com/bookstore/notification/NotificationService.class
+com/bookstore/notification/util/EmailUtil.class
+com/bookstore/notification/entity/NotificationEntity.class
+com/bookstore/notification/entity/NotificationEntity$NotificationEntityBuilder.class
+com/bookstore/notification/NotificationApplication.class
+com/bookstore/notification/kafka/KafkaListeners.class

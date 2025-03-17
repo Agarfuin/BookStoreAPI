@@ -1,0 +1,4 @@
+com/bookstore/kafka/producer/KafkaProducer.class
+com/bookstore/kafka/consumer/KafkaConsumerConfig.class
+com/bookstore/kafka/producer/KafkaProducerConfig.class
+com/bookstore/kafka/KafkaTopicConfig.class
