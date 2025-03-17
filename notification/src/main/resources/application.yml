@@ -1,0 +1,40 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification
+  datasource:
+    username: 'admin'
+    url: jdbc:postgresql://localhost:5432/bookstore
+    password: 'admin123'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'true'
+    show-sql: true
+  profiles:
+    active: default
+  mail:
+    host: smtp.gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: harunselmankarakas@gmail.com
+    password: jjlkfcfxkkgrcfmf
+    fromMail: "noreply@agarfuinbookstore.com"
+    port: 587
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    enabled: true

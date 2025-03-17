@@ -1,4 +1,4 @@
- package com.bookstore.clients.exception;
+package com.bookstore.clients.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -11,11 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
- public class ClientExceptionErrorDecoder implements ErrorDecoder {
+public class ClientExceptionErrorDecoder implements ErrorDecoder {
 
   private final ErrorDecoder defaultErrorDecoder = new Default();
-  private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new
- JavaTimeModule());
+  private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
   @Override
   public Exception decode(String methodKey, Response response) {
@@ -48,4 +47,4 @@ import org.springframework.web.server.ResponseStatusException;
       default -> defaultErrorDecoder.decode(methodKey, response);
     };
   }
- }
+}
