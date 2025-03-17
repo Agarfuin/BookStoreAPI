@@ -19,17 +19,17 @@ spring:
   profiles:
     active: default
   mail:
-    host: smtp.gmail.com
+    host: ${MAIL_HOST}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-    username: harunselmankarakas@gmail.com
-    password: jjlkfcfxkkgrcfmf
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     fromMail: "noreply@agarfuinbookstore.com"
-    port: 587
+    port: ${MAIL_PORT}
 
 eureka:
   client:
