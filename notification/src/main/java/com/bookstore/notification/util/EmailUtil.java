@@ -9,7 +9,8 @@ import org.springframework.util.StreamUtils;
 @Component
 public class EmailUtil {
 
-  private final String VERIFICATION_ENDPOINT = "http://localhost:8080/api/v1/auth/verify?token=";
+  private static final String VERIFICATION_ENDPOINT =
+      "http://localhost:8080/api/v1/auth/verify?token=";
 
   public String getHtmlBody(String firstName, String token) throws IOException {
     ClassPathResource resource = new ClassPathResource("html/verificationEmail.html");

@@ -18,6 +18,5 @@ public class KafkaListeners {
   public void listener(NotificationRequestDto notificationRequestDto) {
     log.info("Received notification request: {}", notificationRequestDto);
     notificationService.handleNotification(notificationRequestDto);
-    log.info("Consumed notification request: {}", notificationRequestDto);
   }
 }
