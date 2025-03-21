@@ -42,4 +42,10 @@ public class AuthService {
   public void verifyEmail(String token) {
     userClient.verifyUser(token);
   }
+
+  public AuthResponseDto generateAdminToken() {
+    return AuthResponseDto.builder()
+        .token(jwtUtil.generateToken("agarfuinbookstore@mail.com", "ADMIN"))
+        .build();
+  }
 }
