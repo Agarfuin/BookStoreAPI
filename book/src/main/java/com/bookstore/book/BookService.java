@@ -6,6 +6,7 @@ import com.bookstore.book.dto.CreateBookResponseDto;
 import com.bookstore.book.dto.UpdateBookRequestDto;
 import com.bookstore.book.entity.BookEntity;
 import com.bookstore.book.repository.BookRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,24 @@ import org.springframework.web.server.ResponseStatusException;
 public class BookService {
 
   private final BookRepository bookRepository;
+
+  public List<BookDto> getAllBooks() {
+    List<BookEntity> allBooks = bookRepository.findAll();
+    return allBooks.stream()
+        .map(
+            book ->
+                BookDto.builder()
+                    .bookId(book.getId())
+                    .title(book.getTitle())
+                    .author(book.getAuthor())
+                    .description(book.getDescription())
+                    .publicationYear(book.getPublicationYear())
+                    .genre(book.getGenre())
+                    .price(book.getPrice())
+                    .quantityInStock(book.getQuantityInStock())
+                    .build())
+        .toList();
+  }
 
   public BookDto getBookById(UUID bookId) {
     BookEntity book =
@@ -32,6 +51,8 @@ public class BookService {
         .title(book.getTitle())
         .author(book.getAuthor())
         .description(book.getDescription())
+        .publicationYear(book.getPublicationYear())
+        .genre(book.getGenre())
         .price(book.getPrice())
         .quantityInStock(book.getQuantityInStock())
         .build();
@@ -48,6 +69,8 @@ public class BookService {
                           .title(createBookRequestDto.getTitle())
                           .author(createBookRequestDto.getAuthor())
                           .description(createBookRequestDto.getDescription())
+                          .publicationYear(createBookRequestDto.getPublicationYear())
+                          .genre(createBookRequestDto.getGenre())
                           .price(createBookRequestDto.getPrice())
                           .quantityInStock(0)
                           .build();
@@ -80,6 +103,14 @@ public class BookService {
         updateBookRequestDto.getDescription() == null
             ? book.getDescription()
             : updateBookRequestDto.getDescription());
+    book.setPublicationYear(
+        updateBookRequestDto.getPublicationYear() == null
+            ? book.getPublicationYear()
+            : updateBookRequestDto.getPublicationYear());
+    book.setGenre(
+        updateBookRequestDto.getGenre() == null
+            ? book.getGenre()
+            : updateBookRequestDto.getGenre());
     book.setPrice(
         updateBookRequestDto.getPrice() == null
             ? book.getPrice()
@@ -96,6 +127,8 @@ public class BookService {
         .title(book.getTitle())
         .author(book.getAuthor())
         .description(book.getDescription())
+        .publicationYear(book.getPublicationYear())
+        .genre(book.getGenre())
         .price(book.getPrice())
         .quantityInStock(book.getQuantityInStock())
         .build();

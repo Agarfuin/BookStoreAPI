@@ -36,4 +36,9 @@ public class AuthController {
   public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
     return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequestDto));
   }
+
+  @GetMapping("/generate-admin-token")
+  public ResponseEntity<AuthResponseDto> generateAdminToken() {
+    return ResponseEntity.status(HttpStatus.OK).body(authService.generateAdminToken());
+  }
 }
