@@ -17,13 +17,7 @@ public class SecurityConfig {
   public static final List<String> WHITELISTED_URLS = List.of("/api/v1/auth/**");
 
   public static final Map<String, String> AUTHORIZED_URLS =
-      Map.of(
-          "/api/v1/user/**",
-          "ADMIN",
-          "/api/v1/book/public/**",
-          "USER",
-          "/api/v1/book/admin/**",
-          "ADMIN");
+      Map.of("/api/v1/user/**", "ADMIN", "/api/v1/books/**", "USER", "/api/v1/admin/**", "ADMIN");
 
   @Bean
   public SecurityWebFilterChain springSecurityFilterChain(
