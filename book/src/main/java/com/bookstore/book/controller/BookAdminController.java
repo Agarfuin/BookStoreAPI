@@ -5,6 +5,7 @@ import com.bookstore.book.dto.BookDto;
 import com.bookstore.book.dto.CreateBookRequestDto;
 import com.bookstore.book.dto.CreateBookResponseDto;
 import com.bookstore.book.dto.UpdateBookRequestDto;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class BookAdminController {
 
   @PostMapping
   public ResponseEntity<CreateBookResponseDto> addBook(
-      @RequestBody CreateBookRequestDto createBookRequestDto) {
+      @Valid @RequestBody CreateBookRequestDto createBookRequestDto) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(bookService.addBook(createBookRequestDto));
   }

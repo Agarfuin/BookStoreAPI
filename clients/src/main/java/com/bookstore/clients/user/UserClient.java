@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "user", configuration = FeignConfig.class)
+@FeignClient(name = "user", url = "${clients.user.url}", configuration = FeignConfig.class)
 public interface UserClient {
 
   @PostMapping("/api/v1/user/new")
