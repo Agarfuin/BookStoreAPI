@@ -1,6 +1,5 @@
 package com.bookstore.auth.util;
 
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
@@ -26,15 +25,6 @@ public class JwtUtil {
         .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
         .signWith(getSecretKey())
         .compact();
-  }
-
-  public Boolean validateToken(String token) {
-    try {
-      Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
-      return true;
-    } catch (JwtException e) {
-      return false;
-    }
   }
 
   private SecretKey getSecretKey() {

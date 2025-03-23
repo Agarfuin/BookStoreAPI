@@ -1,5 +1,7 @@
 package com.bookstore.clients.exception;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.Response;
@@ -14,31 +16,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class ClientExceptionErrorDecoder implements ErrorDecoder {
 
   private final ErrorDecoder defaultErrorDecoder = new Default();
-  private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  private final ObjectMapper objectMapper =
+      new ObjectMapper()
+          .registerModule(new JavaTimeModule())
+          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   @Override
   public Exception decode(String methodKey, Response response) {
-    String responseBody = null;
-    try {
-      if (response.body() != null) {
-        responseBody =
-            new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
-      }
-    } catch (IOException e) {
-      log.error("Error reading response body", e);
-    }
+    String responseBody = getResponseBody(response);
+    String errorMessage = extractErrorMessage(responseBody);
 
-    String errorMessage = "Unknown error occurred";
-    if (responseBody != null) {
-      try {
-        ExceptionResponse exceptionResponse =
-            objectMapper.readValue(responseBody, ExceptionResponse.class);
-        errorMessage = exceptionResponse.getError();
-      } catch (IOException e) {
-        log.error("Error parsing response body", e);
-      }
-    }
-
+    log.info("status code: {}, message: {}", response.status(), errorMessage);
+    log.info("body: {}", responseBody);
     return switch (response.status()) {
       case 400 -> new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
       case 401 -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, errorMessage);
@@ -46,5 +35,31 @@ public class ClientExceptionErrorDecoder implements ErrorDecoder {
       case 500 -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
       default -> defaultErrorDecoder.decode(methodKey, response);
     };
+  }
+
+  private String getResponseBody(Response response) {
+    try {
+      return response.body() != null
+          ? new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8)
+          : null;
+    } catch (IOException e) {
+      log.error("Error reading response body", e);
+      return null;
+    }
+  }
+
+  private String extractErrorMessage(String responseBody) {
+    if (responseBody == null) return "Unknown error";
+
+    try {
+      JsonNode rootNode = objectMapper.readTree(responseBody);
+      if (rootNode.has("error")) {
+        return rootNode.get("error").asText();
+      }
+    } catch (IOException e) {
+      log.error("Error parsing response body: {}", responseBody, e);
+    }
+
+    return responseBody;
   }
 }
