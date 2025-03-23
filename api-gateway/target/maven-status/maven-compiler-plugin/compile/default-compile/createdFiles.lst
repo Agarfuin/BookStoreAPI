@@ -2,6 +2,7 @@ com/bookstore/apigateway/ApiGatewayApplication.class
 com/bookstore/apigateway/util/JwtUtil.class
 com/bookstore/apigateway/exception/ApiGatewayExceptionHandler.class
 com/bookstore/apigateway/filter/JwtFilter.class
+com/bookstore/apigateway/util/AuthenticationUtil.class
 com/bookstore/apigateway/exception/ExceptionResponse.class
 com/bookstore/apigateway/config/SecurityConfig.class
 com/bookstore/apigateway/exception/ExceptionResponse$ExceptionResponseBuilder.class

@@ -18,7 +18,7 @@ spring:
         - id: book
           uri: lb://BOOK
           predicates:
-            - Path=/api/v1/book/**
+            - Path=/api/v1/books/**, /api/v1/admin/books/**
 
 application:
   security:

@@ -7,6 +7,7 @@ import com.bookstore.book.dto.UpdateBookRequestDto;
 import com.bookstore.book.entity.BookEntity;
 import com.bookstore.book.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -60,24 +61,15 @@ public class BookService {
 
   public CreateBookResponseDto addBook(CreateBookRequestDto createBookRequestDto) {
     BookEntity book =
-        bookRepository
-            .findById(createBookRequestDto.getBookId())
-            .orElseGet(
-                () -> {
-                  BookEntity newBook =
-                      BookEntity.builder()
-                          .title(createBookRequestDto.getTitle())
-                          .author(createBookRequestDto.getAuthor())
-                          .description(createBookRequestDto.getDescription())
-                          .publicationYear(createBookRequestDto.getPublicationYear())
-                          .genre(createBookRequestDto.getGenre())
-                          .price(createBookRequestDto.getPrice())
-                          .quantityInStock(0)
-                          .build();
-                  return bookRepository.save(newBook);
-                });
-    book.setQuantityInStock(book.getQuantityInStock() + createBookRequestDto.getQuantity());
-
+        BookEntity.builder()
+            .title(createBookRequestDto.getTitle())
+            .author(createBookRequestDto.getAuthor())
+            .description(createBookRequestDto.getDescription())
+            .publicationYear(createBookRequestDto.getPublicationYear())
+            .genre(createBookRequestDto.getGenre())
+            .price(createBookRequestDto.getPrice())
+            .quantityInStock(createBookRequestDto.getQuantity())
+            .build();
     bookRepository.saveAndFlush(book);
     return CreateBookResponseDto.builder().bookId(book.getId()).build();
   }
@@ -91,34 +83,14 @@ public class BookService {
                     new ResponseStatusException(
                         HttpStatus.NOT_FOUND, String.format("No book with id %s found", bookId)));
 
-    book.setTitle(
-        updateBookRequestDto.getTitle() == null
-            ? book.getTitle()
-            : updateBookRequestDto.getTitle());
-    book.setAuthor(
-        updateBookRequestDto.getAuthor() == null
-            ? book.getAuthor()
-            : updateBookRequestDto.getAuthor());
-    book.setDescription(
-        updateBookRequestDto.getDescription() == null
-            ? book.getDescription()
-            : updateBookRequestDto.getDescription());
-    book.setPublicationYear(
-        updateBookRequestDto.getPublicationYear() == null
-            ? book.getPublicationYear()
-            : updateBookRequestDto.getPublicationYear());
-    book.setGenre(
-        updateBookRequestDto.getGenre() == null
-            ? book.getGenre()
-            : updateBookRequestDto.getGenre());
-    book.setPrice(
-        updateBookRequestDto.getPrice() == null
-            ? book.getPrice()
-            : updateBookRequestDto.getPrice());
-    book.setQuantityInStock(
-        updateBookRequestDto.getQuantity() == null || updateBookRequestDto.getQuantity() < 0
-            ? book.getQuantityInStock()
-            : updateBookRequestDto.getQuantity());
+    Optional.ofNullable(updateBookRequestDto.getTitle()).ifPresent(book::setTitle);
+    Optional.ofNullable(updateBookRequestDto.getAuthor()).ifPresent(book::setAuthor);
+    Optional.ofNullable(updateBookRequestDto.getDescription()).ifPresent(book::setDescription);
+    Optional.ofNullable(updateBookRequestDto.getPublicationYear())
+        .ifPresent(book::setPublicationYear);
+    Optional.ofNullable(updateBookRequestDto.getGenre()).ifPresent(book::setGenre);
+    Optional.ofNullable(updateBookRequestDto.getPrice()).ifPresent(book::setPrice);
+    Optional.ofNullable(updateBookRequestDto.getQuantity()).ifPresent(book::setQuantityInStock);
 
     bookRepository.save(book);
 
