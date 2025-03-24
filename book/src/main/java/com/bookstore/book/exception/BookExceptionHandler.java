@@ -1,8 +1,10 @@
 package com.bookstore.book.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -98,6 +101,40 @@ public class BookExceptionHandler {
                 .time(LocalDateTime.now())
                 .error("Database constraint violation")
                 .errors(errors)
+                .build());
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    Throwable rootCause = ex.getMostSpecificCause();
+
+    if (rootCause instanceof InvalidFormatException) {
+      InvalidFormatException invalidFormatEx = (InvalidFormatException) rootCause;
+      Class<?> targetType = invalidFormatEx.getTargetType();
+
+      if (targetType != null && targetType.isEnum()) {
+        String invalidValue = invalidFormatEx.getValue().toString();
+        String validValues =
+            Arrays.stream(targetType.getEnumConstants())
+                .map(Object::toString)
+                .collect(Collectors.joining(", "));
+
+        String errorMessage =
+            String.format(
+                "Invalid value '%s' for %s. Accepted values are: %s",
+                invalidValue, targetType.getSimpleName(), validValues);
+
+        return ResponseEntity.badRequest()
+            .body(
+                ExceptionResponse.builder().time(LocalDateTime.now()).error(errorMessage).build());
+      }
+    }
+
+    return ResponseEntity.badRequest()
+        .body(
+            ExceptionResponse.builder()
+                .time(LocalDateTime.now())
+                .error("Malformed JSON request")
                 .build());
   }
 }

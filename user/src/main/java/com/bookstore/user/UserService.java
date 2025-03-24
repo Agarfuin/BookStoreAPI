@@ -104,6 +104,10 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token expired");
     }
 
+    if (user.getIsValidated()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already validated");
+    }
+
     user.setIsValidated(true);
     userRepository.save(user);
   }

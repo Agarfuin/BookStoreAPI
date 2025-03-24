@@ -6,6 +6,7 @@ import com.bookstore.notification.repository.NotificationRepository;
 import com.bookstore.notification.util.EmailUtil;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,6 @@ public class NotificationService {
   private String fromMail;
 
   private final JavaMailSender mailSender;
-  private final EmailUtil emailUtil;
   private final NotificationRepository notificationRepository;
 
   public void handleNotification(NotificationRequestDto notificationRequestDto) {
@@ -36,13 +36,19 @@ public class NotificationService {
             .toUserFirstName(notificationRequestDto.getToUserFirstName())
             .build());
 
-    sendHTMLEmail(
-        notificationRequestDto.getToUserEmail(),
-        notificationRequestDto.getToUserFirstName(),
-        notificationRequestDto.getToken());
+    try {
+      String htmlBody =
+          EmailUtil.getHtmlBody(
+              notificationRequestDto.getToUserFirstName(), notificationRequestDto.getToken());
+
+      sendHTMLEmail(
+          notificationRequestDto.getToUserEmail(), notificationRequestDto.getSubject(), htmlBody);
+    } catch (IOException e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
   }
 
-  private void sendHTMLEmail(String toMail, String firstName, String token)
+  private void sendHTMLEmail(String toMail, String subject, String htmlContent)
       throws ResponseStatusException {
     try {
       MimeMessage message = mailSender.createMimeMessage();
@@ -50,8 +56,25 @@ public class NotificationService {
       helper.setFrom(new InternetAddress(fromMail));
       helper.setReplyTo(fromMail);
       helper.setTo(toMail);
-      helper.setSubject("Verify your email!");
-      helper.setText(emailUtil.getHtmlBody(firstName, token), true);
+      helper.setSubject(subject);
+      helper.setText(htmlContent, true);
+
+      mailSender.send(message);
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+  }
+
+  private void sendSimpleEmail(String toMail, String subject, String body)
+      throws ResponseStatusException {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+      helper.setFrom(new InternetAddress(fromMail));
+      helper.setReplyTo(fromMail);
+      helper.setTo(toMail);
+      helper.setSubject(subject);
+      helper.setText(body);
 
       mailSender.send(message);
     } catch (Exception e) {
