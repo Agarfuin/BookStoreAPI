@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class NotificationRequestDto {
 
   private UUID toUserId;
+  private String subject;
   private String toUserFirstName;
   private String toUserEmail;
   private String token;

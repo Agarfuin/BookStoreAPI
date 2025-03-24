@@ -26,6 +26,7 @@ public class AuthService {
         "notification",
         NotificationRequestDto.builder()
             .toUserId(signupResponseDto.getUserId())
+            .subject("Verify your email!")
             .toUserFirstName(signupResponseDto.getFirstName())
             .toUserEmail(signupResponseDto.getEmail())
             .token(signupResponseDto.getUserConfirmationToken())

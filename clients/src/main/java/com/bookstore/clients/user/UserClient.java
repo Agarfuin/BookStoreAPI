@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "user", url = "${clients.user.url}", configuration = FeignConfig.class)
 public interface UserClient {
 
-  @PostMapping("/api/v1/user/new")
+  @PostMapping("/api/v1/user")
   SignupResponseDto createUser(@RequestBody SignupRequestDto signupRequestDto);
 
   @PostMapping("/api/v1/user/validate")
