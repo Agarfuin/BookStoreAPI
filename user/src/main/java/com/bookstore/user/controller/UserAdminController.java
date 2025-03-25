@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/admin/user")
+@RequestMapping("/api/v1/admin/users")
 @RequiredArgsConstructor
 public class UserAdminController {
 
@@ -26,7 +26,7 @@ public class UserAdminController {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(signupRequestDto));
   }
 
-  @PostMapping("/validate")
+  @PostMapping("/user/validate")
   public ResponseEntity<ValidatedUserDto> validateCredentials(
       @RequestBody @Valid LoginRequestDto loginRequestDto) {
     return ResponseEntity.status(HttpStatus.OK)
@@ -35,18 +35,18 @@ public class UserAdminController {
                 loginRequestDto.getEmail(), loginRequestDto.getPassword()));
   }
 
-  @PostMapping("/verify")
+  @PostMapping("/user/verify")
   @ResponseStatus(HttpStatus.OK)
   public void verifyUser(@RequestParam("token") String token) {
     userService.verifyUser(token);
   }
 
-  @GetMapping("/all")
+  @GetMapping
   public ResponseEntity<List<ValidatedUserDto>> getAllUsers() {
     return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
   }
 
-  @GetMapping("/{userId}")
+  @GetMapping("/user/{userId}")
   public ResponseEntity<ValidatedUserDto> getUserDetails(@PathVariable("userId") UUID userId) {
     return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
   }
