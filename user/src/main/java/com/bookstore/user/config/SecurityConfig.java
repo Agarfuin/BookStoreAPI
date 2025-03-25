@@ -12,18 +12,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private static final String[] WHITELISTED_URLS = {"/api/v1/user/**"};
-
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(
-            authorize ->
-                authorize
-                    .requestMatchers(WHITELISTED_URLS)
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .build();
