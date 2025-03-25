@@ -1,6 +1,8 @@
 package com.bookstore.user.dto;
 
 import java.time.Instant;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ValidatedUserDto {
 
+  private UUID id;
   private String email;
   private String role;
   private String firstName;
