@@ -105,10 +105,30 @@ public class UserService {
     }
 
     if (user.getIsValidated()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already validated");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already verified");
     }
 
     user.setIsValidated(true);
     userRepository.save(user);
+  }
+
+  public ValidatedUserDto getUserDetails(String email) {
+    UserEntity currentUser =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        String.format("No user found with email: %s", email)));
+
+    return ValidatedUserDto.builder()
+        .email(currentUser.getEmail())
+        .firstName(currentUser.getFirstName())
+        .lastName(currentUser.getLastName())
+        .role(currentUser.getRole().name())
+        .isVerified(currentUser.getIsValidated())
+        .accountCreationDate(currentUser.getCreatedAt())
+        .build();
   }
 }

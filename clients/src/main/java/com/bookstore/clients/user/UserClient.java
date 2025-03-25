@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "user", url = "${clients.user.url}", configuration = FeignConfig.class)
 public interface UserClient {
 
-  @PostMapping("/api/v1/user")
+  @PostMapping("/api/v1/admin/user")
   SignupResponseDto createUser(@RequestBody SignupRequestDto signupRequestDto);
 
-  @PostMapping("/api/v1/user/validate")
+  @PostMapping("/api/v1/admin/user/validate")
   ValidatedUserDto validateCredentials(@RequestBody LoginRequestDto loginRequestDto);
 
-  @PostMapping("/api/v1/user/verify")
+  @PostMapping("/api/v1/admin/user/verify")
   void verifyUser(@RequestParam("token") String token);
 }
