@@ -6,6 +6,8 @@ import com.bookstore.user.dto.SignupRequestDto;
 import com.bookstore.user.dto.SignupResponseDto;
 import com.bookstore.user.dto.ValidatedUserDto;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +39,15 @@ public class UserAdminController {
   @ResponseStatus(HttpStatus.OK)
   public void verifyUser(@RequestParam("token") String token) {
     userService.verifyUser(token);
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<ValidatedUserDto>> getAllUsers() {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
+  }
+
+  @GetMapping("/{userId}")
+  public ResponseEntity<ValidatedUserDto> getUserDetails(@PathVariable("userId") UUID userId) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
   }
 }

@@ -11,6 +11,7 @@ import com.bookstore.user.repository.UserRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -123,12 +124,49 @@ public class UserService {
                         String.format("No user found with email: %s", email)));
 
     return ValidatedUserDto.builder()
+        .id(currentUser.getId())
         .email(currentUser.getEmail())
         .firstName(currentUser.getFirstName())
         .lastName(currentUser.getLastName())
         .role(currentUser.getRole().name())
         .isVerified(currentUser.getIsValidated())
         .accountCreationDate(currentUser.getCreatedAt())
+        .build();
+  }
+
+  public List<ValidatedUserDto> getAllUsers() {
+    return userRepository.findAll().stream()
+        .map(
+            user ->
+                ValidatedUserDto.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .role(user.getRole().name())
+                    .isVerified(user.getIsValidated())
+                    .accountCreationDate(user.getCreatedAt())
+                    .build())
+        .toList();
+  }
+
+  public ValidatedUserDto getUserById(UUID userId) {
+    UserEntity userEntity =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, String.format("No user found with id: %s", userId)));
+
+    return ValidatedUserDto.builder()
+        .id(userEntity.getId())
+        .email(userEntity.getEmail())
+        .firstName(userEntity.getFirstName())
+        .lastName(userEntity.getLastName())
+        .role(userEntity.getRole().name())
+        .isVerified(userEntity.getIsValidated())
+        .accountCreationDate(userEntity.getCreatedAt())
         .build();
   }
 }
