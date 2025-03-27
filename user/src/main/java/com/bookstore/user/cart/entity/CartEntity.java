@@ -2,7 +2,6 @@ package com.bookstore.user.cart.entity;
 
 import com.bookstore.user.cart.enums.CartStatus;
 import com.bookstore.user.entity.UserEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,9 +23,8 @@ public class CartEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false, unique = true)
-  @JsonBackReference
   private UserEntity user;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -34,6 +32,7 @@ public class CartEntity {
   private List<CartItemEntity> cartItems = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private CartStatus status;
 
   @Transient

@@ -1,13 +1,11 @@
 package com.bookstore.user.cart.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
-
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,20 +23,19 @@ public class CartItemEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "shopping_cart_id", nullable = false)
-  @JsonBackReference("cart-items")
-  private CartEntity shoppingCart;
-
   @Column(nullable = false)
   private UUID bookId;
 
   @Column(nullable = false)
   private String title;
 
-  @Positive private int quantity;
+  @Positive
+  @Column(nullable = false)
+  private Integer quantity;
 
-  @PositiveOrZero private BigDecimal pricePerUnit;
+  @PositiveOrZero
+  @Column(nullable = false)
+  private BigDecimal pricePerUnit;
 
   @Transient
   public BigDecimal getOverallPrice() {
