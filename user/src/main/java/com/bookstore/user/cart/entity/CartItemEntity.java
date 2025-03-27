@@ -31,7 +31,7 @@ public class CartItemEntity {
 
   @Positive
   @Column(nullable = false)
-  private int quantity;
+  private Integer quantity;
 
   @PositiveOrZero
   @Column(nullable = false)
