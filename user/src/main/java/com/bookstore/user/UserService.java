@@ -23,7 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserService {
 
-  private static final int CONFIRMATION_EXPIRATION_HOURS = 24;
+  private static final int CONFIRMATION_EXPIRATION_HOURS =
+      24; // This is just for convention no real usage
   private final UserRepository userRepository;
   private final UserConfirmationRepository userConfirmationRepository;
   private final PasswordEncoder passwordEncoder;
