@@ -8,7 +8,6 @@ import com.bookstore.user.cart.dto.CartDto;
 import com.bookstore.user.cart.entity.CartEntity;
 import com.bookstore.user.cart.entity.CartItemEntity;
 import com.bookstore.user.cart.enums.CartStatus;
-import com.bookstore.user.cart.repository.CartItemRepository;
 import com.bookstore.user.cart.repository.CartRepository;
 import com.bookstore.user.entity.UserEntity;
 import com.bookstore.user.repository.UserRepository;
@@ -25,7 +24,6 @@ public class CartService {
 
   private final UserRepository userRepository;
   private final CartRepository cartRepository;
-  private final CartItemRepository cartItemRepository;
   private final BookClient bookClient;
 
   public List<CartDto> getAllCarts() {
@@ -61,24 +59,7 @@ public class CartService {
   }
 
   public CartDto getCartDetails(String email) {
-    CartEntity cart =
-        cartRepository
-            .findByUser_Email(email)
-            .orElseGet(
-                () -> {
-                  UserEntity currentUser =
-                      userRepository
-                          .findByEmail(email)
-                          .orElseThrow(
-                              () ->
-                                  new ResponseStatusException(
-                                      HttpStatus.INTERNAL_SERVER_ERROR,
-                                      String.format("No user found with email: %s", email)));
-
-                  CartEntity newCart =
-                      CartEntity.builder().user(currentUser).cartItems(new ArrayList<>()).build();
-                  return cartRepository.save(newCart);
-                });
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     return CartDto.builder()
         .cartId(cart.getId())
@@ -91,35 +72,44 @@ public class CartService {
 
   public AddBookToCartResponseDto addBookToCart(
       String email, AddBookToCartRequestDto addBookToCartRequestDto) {
-    CartEntity cart =
-        cartRepository
-            .findByUser_Email(email)
-            .orElseGet(
-                () -> {
-                  UserEntity currentUser =
-                      userRepository
-                          .findByEmail(email)
-                          .orElseThrow(
-                              () ->
-                                  new ResponseStatusException(
-                                      HttpStatus.INTERNAL_SERVER_ERROR,
-                                      String.format("No user found with email: %s", email)));
-
-                  CartEntity newCart = CartEntity.builder().user(currentUser).build();
-                  return cartRepository.save(newCart);
-                });
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     BookDto bookToAdd = bookClient.getBookById(addBookToCartRequestDto.getBookId());
 
-    cartItemRepository.save(
-        CartItemEntity.builder()
-            .shoppingCart(cart)
-            .bookId(bookToAdd.getBookId())
-            .title(bookToAdd.getTitle())
-            .quantity(addBookToCartRequestDto.getQuantity())
-            .pricePerUnit(bookToAdd.getPrice())
-            .build());
+    cart.getCartItems()
+        .add(
+            CartItemEntity.builder()
+                .bookId(bookToAdd.getBookId())
+                .title(bookToAdd.getTitle())
+                .quantity(addBookToCartRequestDto.getQuantity())
+                .pricePerUnit(bookToAdd.getPrice())
+                .build());
+    cartRepository.save(cart);
 
     return AddBookToCartResponseDto.builder().cartId(cart.getId()).build();
+  }
+
+  private CartEntity getCurrentUsersCartCreateNewOneIfNotExists(String email) {
+    return cartRepository
+        .findByUser_Email(email)
+        .orElseGet(
+            () -> {
+              UserEntity currentUser =
+                  userRepository
+                      .findByEmail(email)
+                      .orElseThrow(
+                          () ->
+                              new ResponseStatusException(
+                                  HttpStatus.INTERNAL_SERVER_ERROR,
+                                  String.format("No user found with email: %s", email)));
+
+              CartEntity newCart =
+                  CartEntity.builder()
+                      .user(currentUser)
+                      .cartItems(new ArrayList<>())
+                      .status(CartStatus.PENDING)
+                      .build();
+              return cartRepository.save(newCart);
+            });
   }
 }

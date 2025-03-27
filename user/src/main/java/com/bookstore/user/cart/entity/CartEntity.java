@@ -24,7 +24,7 @@ public class CartEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false, unique = true)
   @JsonBackReference
   private UserEntity user;
@@ -34,6 +34,7 @@ public class CartEntity {
   private List<CartItemEntity> cartItems = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private CartStatus status;
 
   @Transient
