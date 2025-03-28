@@ -28,7 +28,8 @@ public class BookAdminController {
 
   @PatchMapping("/{bookId}")
   public ResponseEntity<BookDto> updateBookById(
-      @PathVariable("bookId") UUID bookId, @RequestBody UpdateBookRequestDto updateBookRequestDto) {
+      @PathVariable("bookId") UUID bookId,
+      @Valid @RequestBody UpdateBookRequestDto updateBookRequestDto) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(bookService.updateBookById(bookId, updateBookRequestDto));
   }

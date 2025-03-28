@@ -2,24 +2,29 @@ package com.bookstore.user.cart;
 
 import com.bookstore.clients.book.BookClient;
 import com.bookstore.clients.book.dto.BookDto;
+import com.bookstore.clients.book.dto.UpdateBookRequestDto;
 import com.bookstore.user.cart.dto.AddBookToCartRequestDto;
 import com.bookstore.user.cart.dto.AddBookToCartResponseDto;
 import com.bookstore.user.cart.dto.CartDto;
+import com.bookstore.user.cart.dto.CheckoutResponseDto;
 import com.bookstore.user.cart.entity.CartEntity;
 import com.bookstore.user.cart.entity.CartItemEntity;
 import com.bookstore.user.cart.enums.CartStatus;
+import com.bookstore.user.cart.enums.PaymentMethod;
 import com.bookstore.user.cart.repository.CartRepository;
 import com.bookstore.user.entity.UserEntity;
 import com.bookstore.user.repository.UserRepository;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
 
   private final UserRepository userRepository;
@@ -89,9 +94,149 @@ public class CartService {
     return AddBookToCartResponseDto.builder().cartId(cart.getId()).build();
   }
 
+  public void updateBookInCart(String email, UUID bookId, Integer quantity) {
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
+
+    CartItemEntity bookToUpdate =
+        cart.getCartItems().stream()
+            .filter(item -> item.getBookId().equals(bookId))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Book with id %s not found in the cart", bookId)));
+
+    if (quantity <= 0) {
+      cart.getCartItems().remove(bookToUpdate);
+    } else {
+      bookToUpdate.setQuantity(quantity);
+    }
+
+    cartRepository.save(cart);
+  }
+
+  public void removeBookFromCart(String email, UUID bookId) {
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
+
+    CartItemEntity bookToRemove =
+        cart.getCartItems().stream()
+            .filter(item -> item.getBookId().equals(bookId))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Book with id %s not found in the cart", bookId)));
+
+    cart.getCartItems().remove(bookToRemove);
+
+    cartRepository.save(cart);
+  }
+
+  public void clearCart(String email) {
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
+    cart.getCartItems().clear();
+    cartRepository.save(cart);
+  }
+
+  public CheckoutResponseDto checkout(String email, String address, PaymentMethod paymentMethod) {
+    CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
+
+    if (cart.getCartItems().isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot checkout an empty cart");
+    }
+
+    Map<UUID, Integer> stockUpdates = new HashMap<>();
+    List<CartItemEntity> outOfStockItems = new ArrayList<>();
+
+    for (CartItemEntity item : cart.getCartItems()) {
+      BookDto book = bookClient.getBookById(item.getBookId());
+      int availableStock = book.getQuantityInStock();
+      int requestedQuantity = item.getQuantity();
+
+      if (requestedQuantity > availableStock) {
+        outOfStockItems.add(item);
+      }
+      stockUpdates.merge(
+          book.getBookId(),
+          availableStock - requestedQuantity,
+          (currentValue, newValue) -> currentValue - requestedQuantity);
+    }
+
+    stockUpdates.forEach((key, val) -> log.info("{}, {}", key, val));
+
+    if (!outOfStockItems.isEmpty()) {
+      String outOfStockBookIds =
+          outOfStockItems.stream()
+              .map(CartItemEntity::getBookId)
+              .map(UUID::toString)
+              .reduce((id1, id2) -> id1 + "," + id2)
+              .orElse("");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          String.format("Books with IDs %s are out of stock", outOfStockBookIds));
+    }
+
+    stockUpdates.forEach(
+        (bookId, newQuantity) ->
+            bookClient.updateBookById(
+                bookId, UpdateBookRequestDto.builder().quantity(newQuantity).build()));
+
+    cart.setStatus(CartStatus.CHECKED_OUT);
+    cartRepository.save(cart);
+
+    return CheckoutResponseDto.builder()
+        .checkoutDate(LocalDateTime.now())
+        .cartId(cart.getId())
+        .address(address)
+        .totalPrice(cart.getTotalPrice())
+        .paymentMethod(paymentMethod)
+        .build();
+  }
+
+  public List<CartDto> getPurchaseHistory(String email) {
+    List<CartEntity> carts =
+        cartRepository
+            .findByUser_Email(email)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("No carts found for user with email %s", email)));
+
+    return carts.stream()
+        .map(
+            cart ->
+                CartDto.builder()
+                    .cartId(cart.getId())
+                    .userId(cart.getUser().getId())
+                    .cartItems(cart.getCartItems())
+                    .totalPrice(cart.getTotalPrice())
+                    .status(cart.getStatus())
+                    .build())
+        .toList();
+  }
+
+  public List<CartDto> getAllPurchaseHistory() {
+    List<CartEntity> carts = cartRepository.findAll();
+
+    return carts.stream()
+        .map(
+            cart ->
+                CartDto.builder()
+                    .cartId(cart.getId())
+                    .userId(cart.getUser().getId())
+                    .cartItems(cart.getCartItems())
+                    .totalPrice(cart.getTotalPrice())
+                    .status(cart.getStatus())
+                    .build())
+        .toList();
+  }
+
   private CartEntity getCurrentUsersCartCreateNewOneIfNotExists(String email) {
     return cartRepository
-        .findByUser_Email(email)
+        .findByUser_EmailAndStatus(email, CartStatus.PENDING)
         .orElseGet(
             () -> {
               UserEntity currentUser =

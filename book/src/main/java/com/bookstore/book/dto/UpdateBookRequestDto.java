@@ -1,6 +1,8 @@
 package com.bookstore.book.dto;
 
+import com.bookstore.book.annotation.ValidPublicationYear;
 import com.bookstore.book.enums.Genre;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -17,8 +19,12 @@ public class UpdateBookRequestDto {
   private String title;
   private String author;
   private String description;
-  private Integer publicationYear;
+
+  @ValidPublicationYear private Integer publicationYear;
+
   private Set<Genre> genre;
   private BigDecimal price;
+
+  @Min(value = 0, message = "Quantity cannot be negative")
   private Integer quantity;
 }
