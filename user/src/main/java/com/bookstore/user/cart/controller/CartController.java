@@ -1,11 +1,13 @@
 package com.bookstore.user.cart.controller;
 
-import com.bookstore.clients.book.dto.BookDto;
 import com.bookstore.user.cart.CartService;
 import com.bookstore.user.cart.dto.AddBookToCartRequestDto;
 import com.bookstore.user.cart.dto.AddBookToCartResponseDto;
 import com.bookstore.user.cart.dto.CartDto;
+import com.bookstore.user.cart.dto.CheckoutResponseDto;
+import com.bookstore.user.cart.enums.PaymentMethod;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,22 +34,42 @@ public class CartController {
         .body(cartService.addBookToCart(email, addBookToCartRequestDto));
   }
 
-  @PatchMapping
-  public String updateBookInCart(
-      @RequestHeader("X-User-Email") String email, @RequestBody BookDto bookDto) {
-    return "Updated book in cart for user with ID: ";
+  @PatchMapping("/{bookId}")
+  public ResponseEntity<String> updateBookInCart(
+      @RequestHeader("X-User-Email") String email,
+      @PathVariable("bookId") UUID bookId,
+      @RequestParam("quantity") Integer quantity) {
+    cartService.updateBookInCart(email, bookId, quantity);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(String.format("Updated book with ID: %s", bookId));
   }
 
   @DeleteMapping
-  public String deleteCart(@RequestHeader("X-User-Email") String email) {
-    return "Removed book from cart for user with ID: ";
+  public ResponseEntity<String> clearCart(@RequestHeader("X-User-Email") String email) {
+    cartService.clearCart(email);
+    return ResponseEntity.status(HttpStatus.OK).body("Cart successfully cleared");
   }
 
   @DeleteMapping("/{bookId}")
-  public String removeBookFromCart(
+  public ResponseEntity<String> removeBookFromCart(
+      @RequestHeader("X-User-Email") String email, @PathVariable("bookId") UUID bookId) {
+    cartService.removeBookFromCart(email, bookId);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(String.format("Removed book with ID: %s", bookId));
+  }
+
+  @PostMapping("/checkout")
+  public ResponseEntity<CheckoutResponseDto> checkout(
       @RequestHeader("X-User-Email") String email,
-      @PathVariable UUID userId,
-      @PathVariable UUID bookId) {
-    return "Removed book with ID: " + bookId + " from cart for user with ID: " + userId;
+      @RequestParam("address") String address,
+      @RequestParam("paymentMethod") PaymentMethod paymentMethod) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(cartService.checkout(email, address, paymentMethod));
+  }
+
+  @GetMapping("/history")
+  public ResponseEntity<List<CartDto>> getOrderHistory(
+      @RequestHeader("X-User-Email") String email) {
+    return ResponseEntity.status(HttpStatus.OK).body(cartService.getPurchaseHistory(email));
   }
 }

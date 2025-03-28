@@ -24,7 +24,12 @@ public class CartAdminController {
   }
 
   @GetMapping("/{cartId}")
-  public ResponseEntity<CartDto> getCartById(@PathVariable Long cartId) {
+  public ResponseEntity<CartDto> getCartById(@PathVariable("cartId") Long cartId) {
     return ResponseEntity.status(HttpStatus.OK).body(cartService.getCartById(cartId));
+  }
+
+  @GetMapping("/history")
+  public ResponseEntity<List<CartDto>> getCartHistory() {
+    return ResponseEntity.status(HttpStatus.OK).body(cartService.getAllPurchaseHistory());
   }
 }
