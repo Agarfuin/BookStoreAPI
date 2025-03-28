@@ -1,4 +1,19 @@
 services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: bookstore
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
@@ -15,5 +30,10 @@ services:
     networks:
       - spring
 networks:
+  postgres:
+    driver: bridge
   spring:
     driver: bridge
+
+volumes:
+  postgres:
