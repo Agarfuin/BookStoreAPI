@@ -17,14 +17,12 @@ import com.bookstore.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CartService {
 
   private final UserRepository userRepository;
@@ -161,10 +159,13 @@ public class CartService {
       stockUpdates.merge(
           book.getBookId(),
           availableStock - requestedQuantity,
-          (currentValue, newValue) -> currentValue - requestedQuantity);
+          (currentValue, newValue) -> {
+            if (currentValue - requestedQuantity < 0) {
+              outOfStockItems.add(item);
+            }
+            return currentValue - requestedQuantity;
+          });
     }
-
-    stockUpdates.forEach((key, val) -> log.info("{}, {}", key, val));
 
     if (!outOfStockItems.isEmpty()) {
       String outOfStockBookIds =
