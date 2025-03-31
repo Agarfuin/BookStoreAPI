@@ -1,3 +1,6 @@
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/book/BookClient.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/book/dto/BookDto.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/book/dto/UpdateBookRequestDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/config/FeignConfig.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/exception/ClientExceptionErrorDecoder.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/clients/src/main/java/com/bookstore/clients/exception/ExceptionResponse.java

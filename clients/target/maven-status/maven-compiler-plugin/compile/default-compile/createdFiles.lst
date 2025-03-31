@@ -1,8 +1,13 @@
+com/bookstore/clients/book/dto/UpdateBookRequestDto.class
 com/bookstore/clients/user/UserClient.class
+com/bookstore/clients/book/dto/BookDto$BookDtoBuilder.class
 com/bookstore/clients/exception/ClientExceptionErrorDecoder.class
 com/bookstore/clients/user/dto/ValidatedUserDto$ValidatedUserDtoBuilder.class
 com/bookstore/clients/user/dto/SignupRequestDto.class
+com/bookstore/clients/book/dto/UpdateBookRequestDto$UpdateBookRequestDtoBuilder.class
 com/bookstore/clients/user/dto/LoginRequestDto$LoginRequestDtoBuilder.class
+com/bookstore/clients/book/dto/BookDto.class
+com/bookstore/clients/book/BookClient.class
 com/bookstore/clients/user/dto/ValidatedUserDto.class
 com/bookstore/clients/user/dto/LoginRequestDto.class
 com/bookstore/clients/notification/NotificationRequestDto$NotificationRequestDtoBuilder.class
