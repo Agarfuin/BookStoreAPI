@@ -3,5 +3,4 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/exception/ApiGatewayExceptionHandler.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/exception/ExceptionResponse.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/filter/JwtFilter.java
-/Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/util/AuthenticationUtil.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/api-gateway/src/main/java/com/bookstore/apigateway/util/JwtUtil.java
