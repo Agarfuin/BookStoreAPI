@@ -92,7 +92,7 @@ public class CartService {
     return AddItemToCartResponseDto.builder().cartId(cart.getId()).build();
   }
 
-  public void updateItemInCartById(String email, UUID itemId, Integer quantity) {
+  public String updateItemInCartById(String email, UUID itemId, Integer quantity) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     CartItemEntity bookToUpdate =
@@ -112,9 +112,11 @@ public class CartService {
     }
 
     cartRepository.save(cart);
+
+    return String.format("Updated item with ID: %s", itemId);
   }
 
-  public void removeItemFromCartById(String email, UUID itemId) {
+  public String removeItemFromCartById(String email, UUID itemId) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     CartItemEntity bookToRemove =
@@ -130,12 +132,16 @@ public class CartService {
     cart.getCartItems().remove(bookToRemove);
 
     cartRepository.save(cart);
+
+    return String.format("Removed item with ID: %s", itemId);
   }
 
-  public void clearCart(String email) {
+  public String clearCart(String email) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
     cart.getCartItems().clear();
     cartRepository.save(cart);
+
+    return "Cart successfully cleared";
   }
 
   public CheckoutResponseDto checkout(String email, String address, PaymentMethod paymentMethod) {

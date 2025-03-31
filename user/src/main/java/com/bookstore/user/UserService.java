@@ -135,6 +135,21 @@ public class UserService {
         .build();
   }
 
+  public String deleteAccount(String email) {
+    UserEntity currentUser =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        String.format("No user found with email: %s", email)));
+
+    userRepository.delete(currentUser);
+
+    return String.format("User with id %s deleted", currentUser.getId());
+  }
+
   public List<ValidatedUserDto> getAllUsers() {
     return userRepository.findAll().stream()
         .map(

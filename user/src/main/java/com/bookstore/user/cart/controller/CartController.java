@@ -39,23 +39,20 @@ public class CartController {
       @RequestHeader("X-User-Email") String email,
       @PathVariable("itemId") UUID itemId,
       @RequestParam("quantity") Integer quantity) {
-    cartService.updateItemInCartById(email, itemId, quantity);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(String.format("Updated item with ID: %s", itemId));
+        .body(cartService.updateItemInCartById(email, itemId, quantity));
   }
 
   @DeleteMapping
   public ResponseEntity<String> clearCart(@RequestHeader("X-User-Email") String email) {
-    cartService.clearCart(email);
-    return ResponseEntity.status(HttpStatus.OK).body("Cart successfully cleared");
+    return ResponseEntity.status(HttpStatus.OK).body(cartService.clearCart(email));
   }
 
   @DeleteMapping("/{itemId}")
   public ResponseEntity<String> removeItemFromCart(
       @RequestHeader("X-User-Email") String email, @PathVariable("itemId") UUID itemId) {
-    cartService.removeItemFromCartById(email, itemId);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(String.format("Removed item with ID: %s", itemId));
+        .body(cartService.removeItemFromCartById(email, itemId));
   }
 
   @PostMapping("/checkout")
