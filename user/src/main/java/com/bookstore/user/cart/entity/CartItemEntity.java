@@ -24,7 +24,7 @@ public class CartItemEntity {
   private Long id;
 
   @Column(nullable = false)
-  private UUID bookId;
+  private UUID itemId;
 
   @Column(nullable = false)
   private String title;

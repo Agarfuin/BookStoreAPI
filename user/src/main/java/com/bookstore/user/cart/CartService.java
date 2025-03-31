@@ -3,8 +3,8 @@ package com.bookstore.user.cart;
 import com.bookstore.clients.book.BookClient;
 import com.bookstore.clients.book.dto.BookDto;
 import com.bookstore.clients.book.dto.UpdateBookRequestDto;
-import com.bookstore.user.cart.dto.AddBookToCartRequestDto;
-import com.bookstore.user.cart.dto.AddBookToCartResponseDto;
+import com.bookstore.user.cart.dto.AddItemToCartRequestDto;
+import com.bookstore.user.cart.dto.AddItemToCartResponseDto;
 import com.bookstore.user.cart.dto.CartDto;
 import com.bookstore.user.cart.dto.CheckoutResponseDto;
 import com.bookstore.user.cart.entity.CartEntity;
@@ -73,37 +73,37 @@ public class CartService {
         .build();
   }
 
-  public AddBookToCartResponseDto addBookToCart(
-      String email, AddBookToCartRequestDto addBookToCartRequestDto) {
+  public AddItemToCartResponseDto addItemToCart(
+      String email, AddItemToCartRequestDto addBookToCartRequestDto) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
-    BookDto bookToAdd = bookClient.getBookById(addBookToCartRequestDto.getBookId());
+    BookDto bookToAdd = bookClient.getBookById(addBookToCartRequestDto.getItemId());
 
     cart.getCartItems()
         .add(
             CartItemEntity.builder()
-                .bookId(bookToAdd.getBookId())
+                .itemId(bookToAdd.getBookId())
                 .title(bookToAdd.getTitle())
                 .quantity(addBookToCartRequestDto.getQuantity())
                 .pricePerUnit(bookToAdd.getPrice())
                 .build());
     cartRepository.save(cart);
 
-    return AddBookToCartResponseDto.builder().cartId(cart.getId()).build();
+    return AddItemToCartResponseDto.builder().cartId(cart.getId()).build();
   }
 
-  public void updateBookInCart(String email, UUID bookId, Integer quantity) {
+  public void updateItemInCartById(String email, UUID itemId, Integer quantity) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     CartItemEntity bookToUpdate =
         cart.getCartItems().stream()
-            .filter(item -> item.getBookId().equals(bookId))
+            .filter(item -> item.getItemId().equals(itemId))
             .findFirst()
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("Book with id %s not found in the cart", bookId)));
+                        String.format("Item with id %s not found in the cart", itemId)));
 
     if (quantity <= 0) {
       cart.getCartItems().remove(bookToUpdate);
@@ -114,18 +114,18 @@ public class CartService {
     cartRepository.save(cart);
   }
 
-  public void removeBookFromCart(String email, UUID bookId) {
+  public void removeItemFromCartById(String email, UUID itemId) {
     CartEntity cart = getCurrentUsersCartCreateNewOneIfNotExists(email);
 
     CartItemEntity bookToRemove =
         cart.getCartItems().stream()
-            .filter(item -> item.getBookId().equals(bookId))
+            .filter(item -> item.getItemId().equals(itemId))
             .findFirst()
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("Book with id %s not found in the cart", bookId)));
+                        String.format("Item with id %s not found in the cart", itemId)));
 
     cart.getCartItems().remove(bookToRemove);
 
@@ -149,7 +149,7 @@ public class CartService {
     List<CartItemEntity> outOfStockItems = new ArrayList<>();
 
     for (CartItemEntity item : cart.getCartItems()) {
-      BookDto book = bookClient.getBookById(item.getBookId());
+      BookDto book = bookClient.getBookById(item.getItemId());
       int availableStock = book.getQuantityInStock();
       int requestedQuantity = item.getQuantity();
 
@@ -170,13 +170,13 @@ public class CartService {
     if (!outOfStockItems.isEmpty()) {
       String outOfStockBookIds =
           outOfStockItems.stream()
-              .map(CartItemEntity::getBookId)
+              .map(CartItemEntity::getItemId)
               .map(UUID::toString)
               .reduce((id1, id2) -> id1 + "," + id2)
               .orElse("");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST,
-          String.format("Books with IDs %s are out of stock", outOfStockBookIds));
+          String.format("Items with IDs %s are out of stock", outOfStockBookIds));
     }
 
     stockUpdates.forEach(

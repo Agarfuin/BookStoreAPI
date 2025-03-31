@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddBookToCartResponseDto {
+public class AddItemToCartResponseDto {
 
   private Long cartId;
 }

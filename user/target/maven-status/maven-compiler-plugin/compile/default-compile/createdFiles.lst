@@ -1,5 +1,3 @@
-com/bookstore/user/cart/dto/AddBookToCartRequestDto.class
-com/bookstore/user/cart/dto/AddBookToCartRequestDto$AddBookToCartRequestDtoBuilder.class
 com/bookstore/user/cart/entity/CartEntity$CartEntityBuilder.class
 com/bookstore/user/cart/dto/CartItemDto$CartItemDtoBuilder.class
 com/bookstore/user/repository/UserRepository.class
@@ -16,9 +14,9 @@ com/bookstore/user/cart/enums/PaymentMethod.class
 com/bookstore/user/cart/repository/CartRepository.class
 com/bookstore/user/cart/repository/CartItemRepository.class
 com/bookstore/user/controller/UserAdminController.class
-com/bookstore/user/cart/dto/AddBookToCartResponseDto$AddBookToCartResponseDtoBuilder.class
 com/bookstore/user/exception/ExceptionResponse$ExceptionResponseBuilder.class
-com/bookstore/user/cart/dto/AddBookToCartResponseDto.class
+com/bookstore/user/cart/dto/AddItemToCartResponseDto$AddItemToCartResponseDtoBuilder.class
+com/bookstore/user/cart/dto/AddItemToCartRequestDto.class
 com/bookstore/user/dto/SignupResponseDto$SignupResponseDtoBuilder.class
 com/bookstore/user/dto/LoginRequestDto.class
 com/bookstore/user/enums/Role.class
@@ -32,8 +30,10 @@ com/bookstore/user/repository/UserConfirmationRepository.class
 com/bookstore/user/cart/entity/CartEntity.class
 com/bookstore/user/dto/LoginRequestDto$LoginRequestDtoBuilder.class
 com/bookstore/user/exception/ExceptionResponse.class
+com/bookstore/user/cart/dto/AddItemToCartResponseDto.class
 com/bookstore/user/exception/UserExceptionHandler.class
 com/bookstore/user/dto/SignupRequestDto$SignupRequestDtoBuilder.class
+com/bookstore/user/cart/dto/AddItemToCartRequestDto$AddItemToCartRequestDtoBuilder.class
 com/bookstore/user/entity/UserEntity.class
 com/bookstore/user/entity/UserEntity$UserEntityBuilder.class
 com/bookstore/user/UserService.class

@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddBookToCartRequestDto {
+public class AddItemToCartRequestDto {
 
-  @NotNull(message = "BookId is required")
-  private UUID bookId;
+  @NotNull(message = "ItemId is required")
+  private UUID itemId;
 
   @NotNull(message = "Quantity is required")
   @Min(value = 0, message = "Quantity cannot be negative")
