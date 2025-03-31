@@ -25,4 +25,9 @@ public class UserController {
       @RequestHeader("X-User-Email") String email) {
     return ResponseEntity.status(HttpStatus.OK).body(userService.getUserDetails(email));
   }
+
+  @DeleteMapping("/user")
+  public ResponseEntity<String> deleteUser(@RequestHeader("X-User-Email") String email) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.deleteAccount(email));
+  }
 }
