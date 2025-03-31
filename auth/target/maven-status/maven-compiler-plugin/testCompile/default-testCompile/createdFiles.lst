@@ -1,2 +1,3 @@
+com/bookstore/auth/common/JwtUtilTest.class
 com/bookstore/auth/service/AuthServiceTest.class
 com/bookstore/auth/controller/AuthControllerTest.class

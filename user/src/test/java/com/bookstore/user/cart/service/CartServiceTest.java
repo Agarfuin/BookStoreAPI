@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
 import com.bookstore.clients.book.BookClient;
 import com.bookstore.clients.book.dto.BookDto;
 import com.bookstore.user.cart.CartService;
-import com.bookstore.user.cart.dto.AddBookToCartRequestDto;
-import com.bookstore.user.cart.dto.AddBookToCartResponseDto;
+import com.bookstore.user.cart.dto.AddItemToCartRequestDto;
+import com.bookstore.user.cart.dto.AddItemToCartResponseDto;
 import com.bookstore.user.cart.dto.CartDto;
 import com.bookstore.user.cart.entity.CartEntity;
 import com.bookstore.user.cart.entity.CartItemEntity;
@@ -37,9 +37,11 @@ class CartServiceTest {
   private CartEntity cart;
   private BookDto bookDto;
   private UUID bookId;
+  private UUID itemId;
 
   @BeforeEach
   void setUp() {
+    itemId = UUID.randomUUID();
     bookId = UUID.randomUUID();
     user = UserEntity.builder().id(UUID.randomUUID()).email("test@example.com").build();
     bookDto =
@@ -79,17 +81,17 @@ class CartServiceTest {
   }
 
   @Test
-  void addBookToCart_ShouldAddBook() {
+  void addItemToCart_ShouldAddBook() {
     lenient().when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
     lenient()
         .when(cartRepository.findByUser_EmailAndStatus(user.getEmail(), CartStatus.PENDING))
         .thenReturn(Optional.of(cart));
     lenient().when(bookClient.getBookById(bookId)).thenReturn(bookDto);
 
-    AddBookToCartRequestDto requestDto =
-        AddBookToCartRequestDto.builder().bookId(bookId).quantity(2).build();
+    AddItemToCartRequestDto requestDto =
+        AddItemToCartRequestDto.builder().itemId(bookId).quantity(2).build();
 
-    AddBookToCartResponseDto response = cartService.addBookToCart(user.getEmail(), requestDto);
+    AddItemToCartResponseDto response = cartService.addItemToCart(user.getEmail(), requestDto);
 
     assertThat(response).isNotNull();
     assertThat(response.getCartId()).isEqualTo(cart.getId());
@@ -99,10 +101,10 @@ class CartServiceTest {
   }
 
   @Test
-  void removeBookFromCart_ShouldRemoveBook() {
+  void removeItemFromCartById_ShouldRemoveBook() {
     CartItemEntity cartItem =
         CartItemEntity.builder()
-            .bookId(bookId)
+            .itemId(itemId)
             .title("Test Book")
             .quantity(2)
             .pricePerUnit(new BigDecimal("10.0"))
@@ -112,7 +114,7 @@ class CartServiceTest {
     when(cartRepository.findByUser_EmailAndStatus(user.getEmail(), CartStatus.PENDING))
         .thenReturn(Optional.of(cart));
 
-    cartService.removeBookFromCart(user.getEmail(), bookId);
+    cartService.removeItemFromCartById(user.getEmail(), itemId);
 
     assertThat(cart.getCartItems()).isEmpty();
   }

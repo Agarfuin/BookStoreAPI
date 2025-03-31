@@ -5,8 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.bookstore.user.cart.CartService;
-import com.bookstore.user.cart.dto.AddBookToCartRequestDto;
-import com.bookstore.user.cart.dto.AddBookToCartResponseDto;
+import com.bookstore.user.cart.dto.AddItemToCartRequestDto;
+import com.bookstore.user.cart.dto.AddItemToCartResponseDto;
 import com.bookstore.user.cart.dto.CartDto;
 import com.bookstore.user.cart.enums.CartStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,12 +51,12 @@ class CartControllerTest {
   }
 
   @Test
-  void addBookToCart_ShouldReturnCreatedCart() throws Exception {
+  void addItemToCart_ShouldReturnCreatedCart() throws Exception {
     String email = "user@example.com";
-    AddBookToCartRequestDto requestDto = new AddBookToCartRequestDto(UUID.randomUUID(), 2);
-    AddBookToCartResponseDto responseDto = AddBookToCartResponseDto.builder().cartId(1L).build();
+    AddItemToCartRequestDto requestDto = new AddItemToCartRequestDto(UUID.randomUUID(), 2);
+    AddItemToCartResponseDto responseDto = AddItemToCartResponseDto.builder().cartId(1L).build();
 
-    when(cartService.addBookToCart(eq(email), any(AddBookToCartRequestDto.class)))
+    when(cartService.addItemToCart(eq(email), any(AddItemToCartRequestDto.class)))
         .thenReturn(responseDto);
 
     mockMvc
@@ -70,20 +70,20 @@ class CartControllerTest {
   }
 
   @Test
-  void updateBookInCart_ShouldReturnSuccessMessage() throws Exception {
+  void updateItemInCartById_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
-    UUID bookId = UUID.randomUUID();
+    UUID itemId = UUID.randomUUID();
     int quantity = 5;
 
-    doNothing().when(cartService).updateBookInCart(email, bookId, quantity);
+    doNothing().when(cartService).updateItemInCartById(email, itemId, quantity);
 
     mockMvc
         .perform(
-            patch("/api/v1/users/cart/{bookId}", bookId)
+            patch("/api/v1/users/cart/{itemId}", itemId)
                 .header("X-User-Email", email)
                 .param("quantity", String.valueOf(quantity)))
         .andExpect(status().isOk())
-        .andExpect(content().string("Updated book with ID: " + bookId));
+        .andExpect(content().string("Updated item with ID: " + itemId));
   }
 
   @Test
@@ -99,15 +99,15 @@ class CartControllerTest {
   }
 
   @Test
-  void removeBookFromCart_ShouldReturnSuccessMessage() throws Exception {
+  void removeItemFromCartById_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
-    UUID bookId = UUID.randomUUID();
+    UUID itemId = UUID.randomUUID();
 
-    doNothing().when(cartService).removeBookFromCart(email, bookId);
+    doNothing().when(cartService).removeItemFromCartById(email, itemId);
 
     mockMvc
-        .perform(delete("/api/v1/users/cart/{bookId}", bookId).header("X-User-Email", email))
+        .perform(delete("/api/v1/users/cart/{itemId}", itemId).header("X-User-Email", email))
         .andExpect(status().isOk())
-        .andExpect(content().string("Removed book with ID: " + bookId));
+        .andExpect(content().string("Removed item with ID: " + itemId));
   }
 }

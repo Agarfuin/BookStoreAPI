@@ -3,8 +3,8 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/CartService.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/controller/CartAdminController.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/controller/CartController.java
-/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/AddBookToCartRequestDto.java
-/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/AddBookToCartResponseDto.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/AddItemToCartRequestDto.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/AddItemToCartResponseDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/CartDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/CartItemDto.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/user/src/main/java/com/bookstore/user/cart/dto/CheckoutResponseDto.java
