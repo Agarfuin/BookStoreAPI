@@ -1,5 +1,6 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/BookApplication.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/BookService.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/annotation/ValidPublicationYear.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/controller/BookAdminController.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/controller/BookController.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/dto/BookDto.java
@@ -11,3 +12,4 @@
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/exception/BookExceptionHandler.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/exception/ExceptionResponse.java
 /Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/repository/BookRepository.java
+/Users/harun/Documents/Coding/Java/agarfuinbookstore/book/src/main/java/com/bookstore/book/util/PublicationYearValidator.java
