@@ -152,22 +152,23 @@ public class CartService {
     }
 
     Map<UUID, Integer> stockUpdates = new HashMap<>();
-    List<CartItemEntity> outOfStockItems = new ArrayList<>();
+    List<UUID> outOfStockItems = new ArrayList<>();
 
     for (CartItemEntity item : cart.getCartItems()) {
       BookDto book = bookClient.getBookById(item.getItemId());
       int availableStock = book.getQuantityInStock();
       int requestedQuantity = item.getQuantity();
 
-      if (requestedQuantity > availableStock) {
-        outOfStockItems.add(item);
+      if (requestedQuantity > availableStock && !outOfStockItems.contains(item.getItemId())) {
+        outOfStockItems.add(item.getItemId());
       }
       stockUpdates.merge(
           book.getBookId(),
           availableStock - requestedQuantity,
           (currentValue, newValue) -> {
-            if (currentValue - requestedQuantity < 0) {
-              outOfStockItems.add(item);
+            if (currentValue - requestedQuantity < 0
+                && !outOfStockItems.contains(item.getItemId())) {
+              outOfStockItems.add(item.getItemId());
             }
             return currentValue - requestedQuantity;
           });
@@ -176,9 +177,8 @@ public class CartService {
     if (!outOfStockItems.isEmpty()) {
       String outOfStockBookIds =
           outOfStockItems.stream()
-              .map(CartItemEntity::getItemId)
               .map(UUID::toString)
-              .reduce((id1, id2) -> id1 + "," + id2)
+              .reduce((id1, id2) -> id1 + ", " + id2)
               .orElse("");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST,

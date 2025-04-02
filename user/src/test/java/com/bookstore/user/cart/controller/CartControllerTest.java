@@ -74,8 +74,9 @@ class CartControllerTest {
     String email = "user@example.com";
     UUID itemId = UUID.randomUUID();
     int quantity = 5;
+    String successMessage = "Updated item with ID: " + itemId;
 
-    doNothing().when(cartService).updateItemInCartById(email, itemId, quantity);
+    when(cartService.updateItemInCartById(email, itemId, quantity)).thenReturn(successMessage);
 
     mockMvc
         .perform(
@@ -89,8 +90,9 @@ class CartControllerTest {
   @Test
   void clearCart_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
+    String successMessage = "Cart successfully cleared";
 
-    doNothing().when(cartService).clearCart(email);
+    when(cartService.clearCart(email)).thenReturn(successMessage);
 
     mockMvc
         .perform(delete("/api/v1/users/cart").header("X-User-Email", email))
@@ -102,8 +104,9 @@ class CartControllerTest {
   void removeItemFromCartById_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
     UUID itemId = UUID.randomUUID();
+    String successMessage = "Removed item with ID: " + itemId;
 
-    doNothing().when(cartService).removeItemFromCartById(email, itemId);
+    when(cartService.removeItemFromCartById(email, itemId)).thenReturn(successMessage);
 
     mockMvc
         .perform(delete("/api/v1/users/cart/{itemId}", itemId).header("X-User-Email", email))
