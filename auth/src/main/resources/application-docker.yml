@@ -1,0 +1,53 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: auth
+  datasource:
+    username: 'admin'
+    url: jdbc:postgresql://postgres:5432/bookstore
+    password: 'admin123'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'true'
+    show-sql: true
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      access: unrestricted
+  tracing:
+    sampling:
+      probability: 1.0
+  #      enabled: false
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

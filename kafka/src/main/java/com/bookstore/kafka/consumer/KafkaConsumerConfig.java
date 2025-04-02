@@ -1,7 +1,5 @@
 package com.bookstore.kafka.consumer;
 
-import static org.apache.kafka.test.TestUtils.consumerConfig;
-
 import com.bookstore.clients.notification.NotificationRequestDto;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +29,7 @@ public class KafkaConsumerConfig {
     props.put(
         JsonDeserializer.VALUE_DEFAULT_TYPE,
         "com.bookstore.clients.notification.NotificationRequestDto");
-    props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.example.clients.notification");
+    props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.bookstore.clients.notification");
     return props;
   }
 
