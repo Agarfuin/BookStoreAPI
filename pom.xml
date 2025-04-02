@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>agarfuinbookstore</name>
-    <url>http://www.agarfuin.github.io</url>
+    <url>https://www.agarfuin.github.io</url>
     <modules>
         <module>user</module>
         <module>eureka-server</module>
