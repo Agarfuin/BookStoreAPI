@@ -538,7 +538,7 @@ After signing-up, you will see a new mail in your inbox to verify your account:
     - `Authorization`: Required, Bearer user token
 - **Query Parameters**:
     - `address`: Required, delivery address
-    - `paymentMethod`: Required, payment method (CREDIT_CARD, CASH, PAYPAL, CRYPTO)
+    - `paymentMethod`: Required, payment method `(CREDIT_CARD, CASH, PAYPAL, CRYPTO)`
 - **Response**: `200 OK`
   ```json
   {
