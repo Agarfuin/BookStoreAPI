@@ -1,13 +1,13 @@
 # Agarfuin's BookStore API
 
 <p align="center">
-  <a href="https://spring.io/projects/spring-boot" target="_blank">
+  <a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Spring_Boot-3.4.1-brightgreen.svg" alt="Spring Boot">
   </a>
-      <a href="https://www.java.com" target="_blank">
+      <a href="https://www.java.com" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Java-17-orange.svg" alt="Java">
   </a>
-  <a href="https://www.opensource.org./licenses/MIT" target="_blank">
+  <a href="https://www.opensource.org./licenses/MIT" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
   </a>
 </p>
