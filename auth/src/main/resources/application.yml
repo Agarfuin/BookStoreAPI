@@ -18,6 +18,8 @@ spring:
     show-sql: true
   profiles:
     active: default
+  kafka:
+    bootstrap-servers: localhost:9093
 
 application:
   security:
