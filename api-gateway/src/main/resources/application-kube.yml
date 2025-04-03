@@ -1,0 +1,51 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user
+          uri: lb://USER
+          predicates:
+            - Path=/api/v1/users/**, /api/v1/admin/users/**
+        - id: auth
+          uri: lb://AUTH
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: book
+          uri: lb://BOOK
+          predicates:
+            - Path=/api/v1/books/**, /api/v1/admin/books/**
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      access: unrestricted
+  tracing:
+    sampling:
+      probability: 1.0
+  #      enabled: false
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
