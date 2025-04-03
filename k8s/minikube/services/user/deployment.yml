@@ -1,31 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service
+  name: user
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-service
+      app: user
   template:
     metadata:
+      name: user
       labels:
-        app: user-service
+        app: user
     spec:
       containers:
-        - name: user-service
+        - name: user
           image: agarfuin/user-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/bookstore
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka-server:8761/eureka
-            - name: ZIPKIN_BASE_URL
-              value: http://zipkin:9411
+            - name: SPRING_PROFILES_ACTIVE
+              value: kube
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_SECRET_KEY
-          ports:
-            - containerPort: 8081
+      restartPolicy: Always
