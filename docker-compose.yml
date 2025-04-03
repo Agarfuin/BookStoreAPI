@@ -3,37 +3,158 @@ services:
     container_name: postgres
     image: postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: bookstore
-      PGDATA: /data/postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=bookstore
+      - PGDATA=/data/postgres
     volumes:
       - postgres:/data/postgres
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - bookstore
     restart: unless-stopped
+
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
-    ports:
-      - "9411:9411"
     networks:
-      - spring
+      - bookstore
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper:/data/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - bookstore
+    restart: unless-stopped
+
   kafka:
-    image: apache/kafka:latest
-    container_name: broker
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    volumes:
+      - kafka:/data/kafka
     ports:
       - "9092:9092"
-      - "29092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
-      - spring
+      - bookstore
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+
+  eureka-server:
+    image: agarfuin/eureka-server:latest
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_PORT=8761
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+    ports:
+      - "8761:8761"
+    networks:
+      - bookstore
+    depends_on:
+      - zipkin
+
+  api-gateway:
+    image: agarfuin/api-gateway:latest
+    container_name: api-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - JWT_SECRET_KEY=9b0f32cd94f7f46fc9537d4b098a9ed8618c796643a2982051275465746d3640e42edc88300531f0e351f5dffc229f3d8a30d1e5ad5049700ff175f164b58e8b4024c0cb7ab3ff38ace9439950a8f7e4305ee938c11e160c9fecf55106dcf78af38b08abccf684c2886e8a7a42e282d967ff8932ed39abc3290a192f8e58f431bfa715258304ea028ca09dfc4b740b66d0229d3bc9c9ac70f934c61af297d02b60074dbe02ea8920e22803851e0d5a045207cb58b1cb5657b700150c13246b0e351a48de418eb893e145fcd1bcb9ea298ae6ac5570d8b7f1aba9fbb13e0742494c39990b80b34ed5e44cf077d65d9ef6b73d9ec353d522e6a53b2a4b922a3317
+    networks:
+      - bookstore
+    ports:
+      - "8080:8080"
+    depends_on:
+      - zipkin
+      - eureka-server
+
+  notification:
+    image: agarfuin/notification-service:latest
+    container_name: notification
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_USERNAME=harunselmankarakas@gmail.com
+      - MAIL_PASSWORD=iqlgwhdkwklzokzt
+      - MAIL_PORT=587
+    networks:
+      - bookstore
+    expose:
+      - "8090"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - kafka
+
+  auth:
+    image: agarfuin/auth-service:latest
+    container_name: auth
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - JWT_SECRET_KEY=9b0f32cd94f7f46fc9537d4b098a9ed8618c796643a2982051275465746d3640e42edc88300531f0e351f5dffc229f3d8a30d1e5ad5049700ff175f164b58e8b4024c0cb7ab3ff38ace9439950a8f7e4305ee938c11e160c9fecf55106dcf78af38b08abccf684c2886e8a7a42e282d967ff8932ed39abc3290a192f8e58f431bfa715258304ea028ca09dfc4b740b66d0229d3bc9c9ac70f934c61af297d02b60074dbe02ea8920e22803851e0d5a045207cb58b1cb5657b700150c13246b0e351a48de418eb893e145fcd1bcb9ea298ae6ac5570d8b7f1aba9fbb13e0742494c39990b80b34ed5e44cf077d65d9ef6b73d9ec353d522e6a53b2a4b922a3317
+    networks:
+      - bookstore
+    expose:
+      - "8082"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - kafka
+
+  book:
+    image: agarfuin/book-service:latest
+    container_name: book
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - bookstore
+    expose:
+      - "8083"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+
+  user:
+    image: agarfuin/user-service
+    container_name: user
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - bookstore
+    expose:
+      - "8081"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+
 networks:
-  postgres:
-    driver: bridge
-  spring:
+  bookstore:
     driver: bridge
 
 volumes:
   postgres:
+  kafka:
+  zookeeper:
