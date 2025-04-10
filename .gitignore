@@ -62,3 +62,6 @@ cached-antora-playbook.yml
 
 node_modules
 /.kotlin/
+
+# Environment variables
+.env
