@@ -9,4 +9,4 @@ spec:
     - port: 9411
       targetPort: 9411
       protocol: TCP
-  type: LoadBalancer
+  type: NodePort

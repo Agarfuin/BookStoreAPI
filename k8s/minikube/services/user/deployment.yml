@@ -22,9 +22,19 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kube
-            - name: JWT_SECRET_KEY
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: jwt-secret
-                  key: JWT_SECRET_KEY
+                  name: postgres-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_DB
       restartPolicy: Always

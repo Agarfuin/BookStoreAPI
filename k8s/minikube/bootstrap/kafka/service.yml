@@ -9,8 +9,8 @@ spec:
     app: kafka
   ports:
     - port: 9092
-      name: internal
+      name: plaintext
     - port: 9093
-      name: external
+      name: plaintext-host
       nodePort: 30093
   type: NodePort
