@@ -29,9 +29,11 @@ class CartControllerTest {
   @InjectMocks private CartController cartController;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private static UUID itemId;
 
   @BeforeEach
   void setUp() {
+    itemId = UUID.fromString("df0270a6-b253-4f63-8a1b-ae721100bccd"); // Test Item ID
     MockitoAnnotations.openMocks(this);
     mockMvc = MockMvcBuilders.standaloneSetup(cartController).build();
   }
@@ -40,20 +42,25 @@ class CartControllerTest {
   void getCartDetails_ShouldReturnCart() throws Exception {
     String email = "user@example.com";
     CartDto cartDto =
-        CartDto.builder().cartId(1L).userId(UUID.randomUUID()).status(CartStatus.PENDING).build();
+        CartDto.builder()
+            .cartId(1L)
+            .userId(UUID.fromString("d0e2b1c8-41be-4e5b-9743-2ab706410032")) // Test User ID
+            .status(CartStatus.PENDING)
+            .build();
 
     when(cartService.getCartDetails(email)).thenReturn(cartDto);
 
     mockMvc
         .perform(get("/api/v1/users/cart").header("X-User-Email", email))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.cartId").value(cartDto.getCartId()));
+        .andExpect(content().json(objectMapper.writeValueAsString(cartDto)));
   }
 
   @Test
   void addItemToCart_ShouldReturnCreatedCart() throws Exception {
     String email = "user@example.com";
-    AddItemToCartRequestDto requestDto = new AddItemToCartRequestDto(UUID.randomUUID(), 2);
+    AddItemToCartRequestDto requestDto =
+        AddItemToCartRequestDto.builder().itemId(itemId).quantity(2).build();
     AddItemToCartResponseDto responseDto = AddItemToCartResponseDto.builder().cartId(1L).build();
 
     when(cartService.addItemToCart(eq(email), any(AddItemToCartRequestDto.class)))
@@ -66,13 +73,12 @@ class CartControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.cartId").value(responseDto.getCartId()));
+        .andExpect(content().json(objectMapper.writeValueAsString(responseDto)));
   }
 
   @Test
   void updateItemInCartById_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
-    UUID itemId = UUID.randomUUID();
     int quantity = 5;
     String successMessage = "Updated item with ID: " + itemId;
 
@@ -84,7 +90,7 @@ class CartControllerTest {
                 .header("X-User-Email", email)
                 .param("quantity", String.valueOf(quantity)))
         .andExpect(status().isOk())
-        .andExpect(content().string("Updated item with ID: " + itemId));
+        .andExpect(content().string(successMessage));
   }
 
   @Test
@@ -97,13 +103,12 @@ class CartControllerTest {
     mockMvc
         .perform(delete("/api/v1/users/cart").header("X-User-Email", email))
         .andExpect(status().isOk())
-        .andExpect(content().string("Cart successfully cleared"));
+        .andExpect(content().string(successMessage));
   }
 
   @Test
   void removeItemFromCartById_ShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
-    UUID itemId = UUID.randomUUID();
     String successMessage = "Removed item with ID: " + itemId;
 
     when(cartService.removeItemFromCartById(email, itemId)).thenReturn(successMessage);
@@ -111,6 +116,6 @@ class CartControllerTest {
     mockMvc
         .perform(delete("/api/v1/users/cart/{itemId}", itemId).header("X-User-Email", email))
         .andExpect(status().isOk())
-        .andExpect(content().string("Removed item with ID: " + itemId));
+        .andExpect(content().string(successMessage));
   }
 }

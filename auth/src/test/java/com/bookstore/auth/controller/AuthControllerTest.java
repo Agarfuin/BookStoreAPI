@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
@@ -48,7 +50,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequestDto)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.token").value("mocked-token"));
+        .andExpect(content().json(objectMapper.writeValueAsString(authResponseDto)));
   }
 
   @Test
@@ -63,7 +65,22 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequestDto)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.token").value("mocked-token"));
+        .andExpect(content().json(objectMapper.writeValueAsString(authResponseDto)));
+  }
+
+  @Test
+  void login_WhenWrongCredentials_ShouldThrowUnauthorized() throws Exception {
+    LoginRequestDto loginRequestDto = new LoginRequestDto("test@example.com", "wrongPassword");
+
+    when(authService.login(any(LoginRequestDto.class)))
+        .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password"));
+
+    mockMvc
+        .perform(
+            post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequestDto)))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -84,6 +101,6 @@ class AuthControllerTest {
     mockMvc
         .perform(get("/api/v1/auth/generate-admin-token"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.token").value("mocked-admin-token"));
+        .andExpect(content().json(objectMapper.writeValueAsString(authResponseDto)));
   }
 }

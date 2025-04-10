@@ -29,6 +29,7 @@ public class CartEntity {
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @JoinColumn(name = "shopping_cart_id")
+  @Builder.Default
   private List<CartItemEntity> cartItems = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)

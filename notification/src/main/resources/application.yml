@@ -28,7 +28,6 @@ spring:
             enable: true
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
-    fromMail: "noreply@agarfuinbookstore.com"
     port: ${MAIL_PORT}
   kafka:
     bootstrap-servers: localhost:9093

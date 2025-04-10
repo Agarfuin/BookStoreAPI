@@ -18,6 +18,7 @@ import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +46,7 @@ class UserServiceTest {
     signupRequestDto = new SignupRequestDto("John", "Doe", "john.doe@example.com", "password123");
     userEntity =
         UserEntity.builder()
-            .id(UUID.randomUUID())
+            .id(UUID.fromString("d0e2b1c8-41be-4e5b-9743-2ab706410032")) // Test User ID
             .firstName("John")
             .lastName("Doe")
             .email("john.doe@example.com")
@@ -74,8 +75,17 @@ class UserServiceTest {
 
     assertNotNull(response);
     assertEquals(userEntity.getEmail(), response.getEmail());
-    verify(userRepository).saveAndFlush(any(UserEntity.class));
-    verify(userConfirmationRepository).saveAndFlush(any(UserConfirmationEntity.class));
+
+    ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+    verify(userRepository).saveAndFlush(userEntityCaptor.capture());
+    assertEquals(userEntity.getEmail(), userEntityCaptor.getValue().getEmail());
+    assertEquals(userEntity.getFirstName(), userEntityCaptor.getValue().getFirstName());
+    assertEquals(userEntity.getLastName(), userEntityCaptor.getValue().getLastName());
+    assertEquals(Boolean.FALSE, userEntityCaptor.getValue().getIsValidated());
+
+    ArgumentCaptor<UserConfirmationEntity> userConfirmationCaptor =
+        ArgumentCaptor.forClass(UserConfirmationEntity.class);
+    verify(userConfirmationRepository).saveAndFlush(userConfirmationCaptor.capture());
   }
 
   @Test
@@ -86,6 +96,7 @@ class UserServiceTest {
     ResponseStatusException exception =
         assertThrows(ResponseStatusException.class, () -> userService.createUser(signupRequestDto));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    assertEquals("User with provided email already exists", exception.getReason());
   }
 
   @Test
@@ -99,6 +110,7 @@ class UserServiceTest {
 
     assertNotNull(validatedUser);
     assertEquals(userEntity.getEmail(), validatedUser.getEmail());
+    assertEquals(userEntity.getRole().toString(), validatedUser.getRole());
   }
 
   @Test
@@ -111,6 +123,7 @@ class UserServiceTest {
             ResponseStatusException.class,
             () -> userService.validateCredentials(userEntity.getEmail(), "wrongPassword"));
     assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+    assertEquals("Invalid password", exception.getReason());
   }
 
   @Test
@@ -123,6 +136,7 @@ class UserServiceTest {
             ResponseStatusException.class,
             () -> userService.validateCredentials(userEntity.getEmail(), "password123"));
     assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+    assertEquals("User not validated. Please verify your email to login", exception.getReason());
   }
 
   @Test
@@ -151,6 +165,7 @@ class UserServiceTest {
             ResponseStatusException.class,
             () -> userService.verifyUser(userConfirmationEntity.getToken()));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    assertEquals("Token expired", exception.getReason());
   }
 
   @Test
@@ -161,6 +176,8 @@ class UserServiceTest {
 
     assertNotNull(userDetails);
     assertEquals(userEntity.getEmail(), userDetails.getEmail());
+    assertEquals(userEntity.getFirstName(), userDetails.getFirstName());
+    assertEquals(userEntity.getLastName(), userDetails.getLastName());
   }
 
   @Test
@@ -171,5 +188,8 @@ class UserServiceTest {
         assertThrows(
             ResponseStatusException.class, () -> userService.getUserDetails(userEntity.getEmail()));
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
+    assertEquals(
+        String.format("No user found with email: %s", userEntity.getEmail()),
+        exception.getReason());
   }
 }

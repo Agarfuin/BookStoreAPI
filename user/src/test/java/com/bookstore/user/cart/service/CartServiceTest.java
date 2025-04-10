@@ -20,6 +20,7 @@ import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,9 +42,13 @@ class CartServiceTest {
 
   @BeforeEach
   void setUp() {
-    itemId = UUID.randomUUID();
-    bookId = UUID.randomUUID();
-    user = UserEntity.builder().id(UUID.randomUUID()).email("test@example.com").build();
+    itemId = UUID.fromString("df0270a6-b253-4f63-8a1b-ae721100bccd"); // Test Item ID
+    bookId = UUID.fromString("2c6c6f07-b17b-4e52-86ab-b356c515a556"); // Test Book ID
+    user =
+        UserEntity.builder()
+            .id(UUID.fromString("d0e2b1c8-41be-4e5b-9743-2ab706410032")) // Test User ID
+            .email("test@example.com")
+            .build();
     bookDto =
         BookDto.builder()
             .bookId(bookId)
@@ -97,6 +102,14 @@ class CartServiceTest {
     assertThat(response.getCartId()).isEqualTo(cart.getId());
     assertThat(cart.getCartItems()).hasSize(1);
 
+    ArgumentCaptor<CartEntity> cartEntityCaptor = ArgumentCaptor.forClass(CartEntity.class);
+    verify(cartRepository).save(cartEntityCaptor.capture());
+
+    CartEntity savedCart = cartEntityCaptor.getValue();
+    assertThat(savedCart.getCartItems()).hasSize(1);
+    assertThat(savedCart.getCartItems().get(0).getItemId()).isEqualTo(bookId);
+    assertThat(savedCart.getCartItems().get(0).getQuantity()).isEqualTo(2);
+
     verify(bookClient).getBookById(bookId);
   }
 
@@ -117,5 +130,11 @@ class CartServiceTest {
     cartService.removeItemFromCartById(user.getEmail(), itemId);
 
     assertThat(cart.getCartItems()).isEmpty();
+
+    ArgumentCaptor<CartEntity> cartEntityCaptor = ArgumentCaptor.forClass(CartEntity.class);
+    verify(cartRepository).save(cartEntityCaptor.capture());
+
+    CartEntity savedCart = cartEntityCaptor.getValue();
+    assertThat(savedCart.getCartItems()).isEmpty();
   }
 }
