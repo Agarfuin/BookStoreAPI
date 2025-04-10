@@ -13,11 +13,11 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,28 +30,27 @@ class NotificationServiceTest {
   @InjectMocks private NotificationService notificationService;
 
   private NotificationRequestDto notificationRequestDto;
+  private static UUID toUserId;
 
   @BeforeEach
   void setUp() {
+    toUserId = UUID.fromString("bad60fa3-869b-4b27-8a2d-fff421002ff0"); // Test To User ID
+
     notificationRequestDto =
         NotificationRequestDto.builder()
-            .toUserId(UUID.randomUUID())
+            .toUserId(toUserId)
             .toUserEmail("test@example.com")
             .toUserFirstName("John")
             .subject("Test Subject")
             .token("testToken")
             .build();
-
-    ReflectionTestUtils.setField(notificationService, "fromMail", "noreply@example.com");
   }
 
   @Test
   void handleNotification_WhenNotificationAlreadyExists_ShouldSkipSavingAndSending() {
-    UUID userId = UUID.randomUUID();
-    when(notificationRepository.findByToUserId(userId))
+    when(notificationRepository.findByToUserId(toUserId))
         .thenReturn(Optional.of(new NotificationEntity()));
 
-    notificationRequestDto.setToUserId(userId);
     notificationService.handleNotification(notificationRequestDto);
 
     verify(notificationRepository, never()).save(any());
@@ -60,28 +59,32 @@ class NotificationServiceTest {
 
   @Test
   void handleNotification_ShouldPersistNotificationAndSendEmail() throws Exception {
-    UUID userId = UUID.randomUUID();
-    when(notificationRepository.findByToUserId(userId)).thenReturn(Optional.empty());
+    when(notificationRepository.findByToUserId(toUserId)).thenReturn(Optional.empty());
     when(mailSender.createMimeMessage()).thenReturn(mock(MimeMessage.class));
 
-    notificationRequestDto.setToUserId(userId);
     notificationService.handleNotification(notificationRequestDto);
 
-    verify(notificationRepository, times(1)).save(any(NotificationEntity.class));
+    ArgumentCaptor<NotificationEntity> notificationEntityCaptor =
+        ArgumentCaptor.forClass(NotificationEntity.class);
+    verify(notificationRepository, times(1)).save(notificationEntityCaptor.capture());
     verify(mailSender, times(1)).send(any(MimeMessage.class));
+
+    NotificationEntity savedEntity = notificationEntityCaptor.getValue();
+    assertNotNull(savedEntity);
+    assertEquals(notificationRequestDto.getToUserId(), savedEntity.getToUserId());
+    assertEquals(notificationRequestDto.getToUserEmail(), savedEntity.getToUserEmail());
+    assertEquals(notificationRequestDto.getToUserFirstName(), savedEntity.getToUserFirstName());
   }
 
   @Test
   void handleNotification_WhenEmailDeliveryFails_ShouldThrowInternalServerError() throws Exception {
-    UUID userId = UUID.randomUUID();
-    when(notificationRepository.findByToUserId(userId)).thenReturn(Optional.empty());
+    when(notificationRepository.findByToUserId(toUserId)).thenReturn(Optional.empty());
     MimeMessage mimeMessage = mock(MimeMessage.class);
     when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
     doThrow(new RuntimeException("Email sending failed"))
         .when(mailSender)
         .send(any(MimeMessage.class));
 
-    notificationRequestDto.setToUserId(userId);
     ResponseStatusException exception =
         assertThrows(
             ResponseStatusException.class,

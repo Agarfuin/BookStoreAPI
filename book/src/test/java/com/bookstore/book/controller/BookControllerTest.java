@@ -3,6 +3,7 @@ package com.bookstore.book.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookstore.book.BookService;
@@ -36,7 +37,7 @@ class BookControllerTest {
     mockMvc = MockMvcBuilders.standaloneSetup(bookController, bookAdminController).build();
     objectMapper = new ObjectMapper();
 
-    bookId = UUID.randomUUID();
+    bookId = UUID.fromString("2c6c6f07-b17b-4e52-86ab-b356c515a556"); // Test Book ID
     bookDto =
         BookDto.builder()
             .bookId(bookId)
@@ -53,7 +54,8 @@ class BookControllerTest {
 
     mockMvc
         .perform(get("/api/v1/books").contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(List.of(bookDto))));
   }
 
   @Test
@@ -62,7 +64,8 @@ class BookControllerTest {
 
     mockMvc
         .perform(get("/api/v1/books/" + bookId).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(bookDto)));
   }
 
   @Test
@@ -71,13 +74,13 @@ class BookControllerTest {
         CreateBookRequestDto.builder()
             .title("New Book")
             .author("New Author")
-            .publicationYear(2024) // Added required field
+            .publicationYear(2024)
             .genre(Set.of(Genre.FICTION))
             .price(new BigDecimal("19.99"))
             .quantity(10)
             .build();
 
-    CreateBookResponseDto response = new CreateBookResponseDto(UUID.randomUUID());
+    CreateBookResponseDto response = CreateBookResponseDto.builder().bookId(bookId).build();
     when(bookService.addBook(any())).thenReturn(response);
 
     mockMvc
@@ -85,7 +88,8 @@ class BookControllerTest {
             post("/api/v1/admin/books")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isCreated());
+        .andExpect(status().isCreated())
+        .andExpect(content().json(objectMapper.writeValueAsString(response)));
   }
 
   @Test
@@ -103,13 +107,15 @@ class BookControllerTest {
             patch("/api/v1/admin/books/" + bookId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(bookDto)));
   }
 
   @Test
   void deleteBookById_ShouldDeleteBook() throws Exception {
     mockMvc
         .perform(delete("/api/v1/admin/books/" + bookId).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().string("Book successfully deleted from the store!"));
   }
 }
