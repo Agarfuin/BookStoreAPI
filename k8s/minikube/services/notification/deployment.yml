@@ -1,27 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: notification-service
+  name: notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: notification-service
+      app: notification
   template:
     metadata:
+      name: notification
       labels:
-        app: notification-service
+        app: notification
     spec:
       containers:
-        - name: notification-service
+        - name: notification
           image: agarfuin/notification-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8090
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/bookstore
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka-server:8761/eureka
-            - name: ZIPKIN_BASE_URL
-              value: http://zipkin:9411
+            - name: SPRING_PROFILES_ACTIVE
+              value: kube
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_DB
             - name: MAIL_HOST
               valueFrom:
                 secretKeyRef:
@@ -42,5 +57,4 @@ spec:
                 secretKeyRef:
                   name: mail-credentials
                   key: MAIL_PORT
-          ports:
-            - containerPort: 8090
+      restartPolicy: Always

@@ -3,9 +3,15 @@ services:
     container_name: postgres
     image: postgres
     environment:
+<<<<<<< Updated upstream
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin123
       - POSTGRES_DB=bookstore
+=======
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+>>>>>>> Stashed changes
       - PGDATA=/data/postgres
     volumes:
       - postgres:/data/postgres
@@ -18,6 +24,8 @@ services:
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
+    ports:
+      - "9411:9411"
     networks:
       - bookstore
 
@@ -78,7 +86,11 @@ services:
     container_name: api-gateway
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+<<<<<<< Updated upstream
       - JWT_SECRET_KEY=9b0f32cd94f7f46fc9537d4b098a9ed8618c796643a2982051275465746d3640e42edc88300531f0e351f5dffc229f3d8a30d1e5ad5049700ff175f164b58e8b4024c0cb7ab3ff38ace9439950a8f7e4305ee938c11e160c9fecf55106dcf78af38b08abccf684c2886e8a7a42e282d967ff8932ed39abc3290a192f8e58f431bfa715258304ea028ca09dfc4b740b66d0229d3bc9c9ac70f934c61af297d02b60074dbe02ea8920e22803851e0d5a045207cb58b1cb5657b700150c13246b0e351a48de418eb893e145fcd1bcb9ea298ae6ac5570d8b7f1aba9fbb13e0742494c39990b80b34ed5e44cf077d65d9ef6b73d9ec353d522e6a53b2a4b922a3317
+=======
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+>>>>>>> Stashed changes
     networks:
       - bookstore
     ports:
@@ -92,10 +104,20 @@ services:
     container_name: notification
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+<<<<<<< Updated upstream
       - MAIL_HOST=smtp.gmail.com
       - MAIL_USERNAME=harunselmankarakas@gmail.com
       - MAIL_PASSWORD=iqlgwhdkwklzokzt
       - MAIL_PORT=587
+=======
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_PORT=${MAIL_PORT}
+>>>>>>> Stashed changes
     networks:
       - bookstore
     expose:
@@ -111,7 +133,11 @@ services:
     container_name: auth
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+<<<<<<< Updated upstream
       - JWT_SECRET_KEY=9b0f32cd94f7f46fc9537d4b098a9ed8618c796643a2982051275465746d3640e42edc88300531f0e351f5dffc229f3d8a30d1e5ad5049700ff175f164b58e8b4024c0cb7ab3ff38ace9439950a8f7e4305ee938c11e160c9fecf55106dcf78af38b08abccf684c2886e8a7a42e282d967ff8932ed39abc3290a192f8e58f431bfa715258304ea028ca09dfc4b740b66d0229d3bc9c9ac70f934c61af297d02b60074dbe02ea8920e22803851e0d5a045207cb58b1cb5657b700150c13246b0e351a48de418eb893e145fcd1bcb9ea298ae6ac5570d8b7f1aba9fbb13e0742494c39990b80b34ed5e44cf077d65d9ef6b73d9ec353d522e6a53b2a4b922a3317
+=======
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+>>>>>>> Stashed changes
     networks:
       - bookstore
     expose:
@@ -127,6 +153,9 @@ services:
     container_name: book
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - bookstore
     expose:
@@ -141,6 +170,9 @@ services:
     container_name: user
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - bookstore
     expose:

@@ -1,28 +1,53 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   labels:
     app: postgres
 spec:
+  serviceName: postgres
   replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
   template:
     metadata:
+      name: postgres
       labels:
         app: postgres
     spec:
+      volumes:
+        - name: postgres
+          persistentVolumeClaim:
+            claimName: postgres-pc-volume-claim
       containers:
         - name: postgres
-          image: postgres:latest
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: postgres
           env:
-            - name: POSTGRES_USER
-              value: admin
-            - name: POSTGRES_PASSWORD
-              value: admin123
             - name: POSTGRES_DB
-              value: bookstore
-          ports:
-            - containerPort: 5432
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: postgres
