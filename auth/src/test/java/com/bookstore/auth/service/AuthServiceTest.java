@@ -36,13 +36,13 @@ class AuthServiceTest {
   private SignupResponseDto signupResponse;
   private LoginRequestDto loginRequest;
   private ValidatedUserDto validatedUser;
-  private static final UUID USER_ID = UUID.randomUUID();
 
   @BeforeEach
   void setUp() {
+    UUID userId = UUID.fromString("d0e2b1c8-41be-4e5b-9743-2ab706410032"); // Test User ID
     signupRequest = new SignupRequestDto("John", "Doe", "john.doe@example.com", "password123");
     signupResponse =
-        new SignupResponseDto(USER_ID, "John", "john.doe@example.com", "confirmationToken");
+        new SignupResponseDto(userId, "John", "john.doe@example.com", "confirmationToken");
     loginRequest = new LoginRequestDto("john.doe@example.com", "password123");
     validatedUser = new ValidatedUserDto("john.doe@example.com", "USER");
   }

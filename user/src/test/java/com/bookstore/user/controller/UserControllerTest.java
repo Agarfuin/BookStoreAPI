@@ -10,7 +10,7 @@ import com.bookstore.user.dto.SignupRequestDto;
 import com.bookstore.user.dto.SignupResponseDto;
 import com.bookstore.user.dto.ValidatedUserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,13 @@ class UserControllerTest {
     signupRequestDto = new SignupRequestDto("John", "Doe", "john.doe@example.com", "password123");
     validatedUserDto =
         new ValidatedUserDto(
-            UUID.randomUUID(), "john.doe@example.com", "John", "Doe", "USER", true, null);
+            UUID.fromString("d0e2b1c8-41be-4e5b-9743-2ab706410032"), // Test User ID
+            "john.doe@example.com",
+            "John",
+            "Doe",
+            "USER",
+            true,
+            null);
   }
 
   @Test
@@ -62,7 +68,7 @@ class UserControllerTest {
     mockMvc
         .perform(get("/api/v1/users/user").header("X-User-Email", validatedUserDto.getEmail()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.email").value(validatedUserDto.getEmail()));
+        .andExpect(content().json(objectMapper.writeValueAsString(validatedUserDto)));
   }
 
   @Test
@@ -78,7 +84,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequestDto)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.email").value(signupRequestDto.getEmail()));
+        .andExpect(content().json(objectMapper.writeValueAsString(responseDto)));
   }
 
   @Test
@@ -93,7 +99,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequestDto)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.email").value(validatedUserDto.getEmail()));
+        .andExpect(content().json(objectMapper.writeValueAsString(validatedUserDto)));
   }
 
   @Test
@@ -107,12 +113,12 @@ class UserControllerTest {
 
   @Test
   void getAllUsers_ShouldReturnUserList() throws Exception {
-    when(userService.getAllUsers()).thenReturn(Collections.singletonList(validatedUserDto));
+    when(userService.getAllUsers()).thenReturn(List.of(validatedUserDto));
 
     mockMvc
         .perform(get("/api/v1/admin/users"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].email").value(validatedUserDto.getEmail()));
+        .andExpect(content().json(objectMapper.writeValueAsString(List.of(validatedUserDto))));
   }
 
   @Test
@@ -122,6 +128,6 @@ class UserControllerTest {
     mockMvc
         .perform(get("/api/v1/admin/users/user/{userId}", validatedUserDto.getId()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.email").value(validatedUserDto.getEmail()));
+        .andExpect(content().json(objectMapper.writeValueAsString(validatedUserDto)));
   }
 }

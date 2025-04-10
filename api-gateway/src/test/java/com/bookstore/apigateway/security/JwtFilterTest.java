@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.bookstore.apigateway.filter.JwtFilter;
 import com.bookstore.apigateway.util.JwtUtil;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,7 +51,7 @@ class JwtFilterTest {
 
     StepVerifier.create(jwtFilter.filter(exchange, filterChain)).verifyComplete();
 
-    assertEquals(401, exchange.getResponse().getStatusCode().value());
+    assertEquals(401, Objects.requireNonNull(exchange.getResponse().getStatusCode()).value());
   }
 
   @Test

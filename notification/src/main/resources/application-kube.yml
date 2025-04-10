@@ -5,9 +5,9 @@ spring:
   application:
     name: notification
   datasource:
-    username: 'admin'
-    url: jdbc:postgresql://postgres:5432/bookstore
-    password: 'admin123'
+    username: ${POSTGRES_USER}
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,7 +26,6 @@ spring:
             enable: true
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
-    fromMail: "noreply@agarfuinbookstore.com"
     port: ${MAIL_PORT}
   kafka:
     bootstrap-servers: kafka:9092

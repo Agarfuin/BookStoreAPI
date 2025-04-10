@@ -8,7 +8,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,8 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class NotificationService {
 
-  @Value("${spring.mail.fromMail}")
-  private String fromMail;
+  private static final String FROM_MAIL = "noreply@agarfuinbookstore.com";
 
   private final JavaMailSender mailSender;
   private final NotificationRepository notificationRepository;
@@ -53,8 +51,8 @@ public class NotificationService {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      helper.setFrom(new InternetAddress(fromMail));
-      helper.setReplyTo(fromMail);
+      helper.setFrom(new InternetAddress(FROM_MAIL));
+      helper.setReplyTo(FROM_MAIL);
       helper.setTo(toMail);
       helper.setSubject(subject);
       helper.setText(htmlContent, true);
@@ -70,8 +68,8 @@ public class NotificationService {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      helper.setFrom(new InternetAddress(fromMail));
-      helper.setReplyTo(fromMail);
+      helper.setFrom(new InternetAddress(FROM_MAIL));
+      helper.setReplyTo(FROM_MAIL);
       helper.setTo(toMail);
       helper.setSubject(subject);
       helper.setText(body);
