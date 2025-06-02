@@ -23,8 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserService {
 
-  private static final int CONFIRMATION_EXPIRATION_HOURS =
-      24; // This is just for convention no real usage
+  private static final int CONFIRMATION_EXPIRATION_HOURS = 24; // Just for convention, no real usage
   private final UserRepository userRepository;
   private final UserConfirmationRepository userConfirmationRepository;
   private final PasswordEncoder passwordEncoder;
@@ -110,7 +109,7 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already verified");
     }
 
-    user.setIsValidated(true);
+    user.setIsValidated(Boolean.TRUE);
     userRepository.save(user);
   }
 
