@@ -49,7 +49,7 @@ class UserControllerTest {
             "John",
             "Doe",
             "USER",
-            true,
+            Boolean.TRUE,
             null);
   }
 

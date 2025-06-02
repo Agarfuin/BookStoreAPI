@@ -47,7 +47,7 @@ class JwtFilterTest {
     MockServerWebExchange exchange = MockServerWebExchange.from(request);
 
     when(jwtUtil.extractToken(any())).thenReturn("invalid-token");
-    when(jwtUtil.validateToken("invalid-token")).thenReturn(false);
+    when(jwtUtil.validateToken("invalid-token")).thenReturn(Boolean.FALSE);
 
     StepVerifier.create(jwtFilter.filter(exchange, filterChain)).verifyComplete();
 
@@ -63,7 +63,7 @@ class JwtFilterTest {
     MockServerWebExchange exchange = MockServerWebExchange.from(request);
 
     when(jwtUtil.extractToken(any())).thenReturn("valid-token");
-    when(jwtUtil.validateToken("valid-token")).thenReturn(true);
+    when(jwtUtil.validateToken("valid-token")).thenReturn(Boolean.TRUE);
     when(jwtUtil.getUsernameFromToken("valid-token")).thenReturn("user@example.com");
     when(jwtUtil.getRoleFromToken("valid-token")).thenReturn("USER");
     when(filterChain.filter(any())).thenReturn(Mono.empty());

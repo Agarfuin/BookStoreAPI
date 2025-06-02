@@ -69,9 +69,21 @@ management system requiring a robust backend.
 
 ### Installation
 
-**IMPORTANT**: Before starting, make sure that you put your PostgreSQL, Mail Provider credentials, and JWT secret key in
-the docker-compose.yml or /k8s/secrets/secrets.yml files. You can find the related fields by searching for
-`"YOUR"` keyword in those files.
+**IMPORTANT**: Before starting, make sure that you set your PostgreSQL, Mail Provider credentials, and JWT secret key
+environmental variables. If you are using **Docker** you can create <strong><u>.env</u></strong> file in the root of the
+project, or you can set them manually. You need to set the following variables:
+
+1. **POSTGRES_USER**
+2. **POSTGRES_PASSWORD**
+3. **POSTGRES_DB**
+4. **JWT_SECRET_KEY**
+5. **MAIL_HOST**
+6. **MAIL_USERNAME**
+7. **MAIL_PASSWORD**
+8. **MAIL_PORT**
+
+If you are using **Kubernetes**, you first have to set the variables inside the `k8s/minikube/secrets/secrets.yml` file.
+After that you should be ready to go.
 
 1. Clone the repository
    ```bash
@@ -99,7 +111,7 @@ From this point, you can choose to run the project using Docker or Kubernetes.
 
 The API will be available at `http://localhost:8080`
 
-#### Kubernetes Setup
+#### Kubernetes Setup (STILL UNDER DEVELOPMENT)
 
 If you want to run the project without docker compose, you can continue from the third step below:
 
@@ -109,9 +121,26 @@ If you want to run the project without docker compose, you can continue from the
    ``` 
 
 5. Deploy the application
-   ```bash
-   kubectl apply -f k8s/
-   ```
+    1. First deploy the secrets
+       ```bash
+       kubectl apply -f k8s/minikube/secrets
+       ```
+    2. Then deploy the bootstrap applications
+       ```bash
+       kubectl apply -f k8s/minikube/bootstrap/zookeeper
+       kubectl apply -f k8s/minikube/bootstrap/kafka
+       kubectl apply -f k8s/minikube/bootstrap/postgres
+       kubectl apply -f k8s/minikube/bootstrap/zipkin
+       kubectl apply -f k8s/minikube/bootstrap/eureka-server
+       ```
+    3. Finally deploy the services
+       ```bash
+       kubectl apply -f k8s/minikube/services/api-gateway
+       kubectl apply -f k8s/minikube/services/auth
+       kubectl apply -f k8s/minikube/services/book
+       kubectl apply -f k8s/minikube/services/notification
+       kubectl apply -f k8s/minikube/services/user
+       ```
 
 6. Get the external IP of the Api-Gateway
    ```bash

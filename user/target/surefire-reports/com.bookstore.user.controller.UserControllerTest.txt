@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.bookstore.user.controller.UserControllerTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.867 s -- in com.bookstore.user.controller.UserControllerTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.406 s -- in com.bookstore.user.controller.UserControllerTest

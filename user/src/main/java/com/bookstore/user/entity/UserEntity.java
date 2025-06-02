@@ -41,7 +41,7 @@ public class UserEntity implements UserDetails {
 
   @Builder.Default
   @Column(nullable = false)
-  private Boolean isValidated = false;
+  private Boolean isValidated = Boolean.FALSE;
 
   @CreationTimestamp private Instant createdAt;
   @UpdateTimestamp private Instant updatedAt;

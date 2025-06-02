@@ -52,7 +52,7 @@ class UserServiceTest {
             .email("john.doe@example.com")
             .password("encodedPassword")
             .role(Role.USER)
-            .isValidated(false)
+            .isValidated(Boolean.FALSE)
             .createdAt(Instant.now())
             .build();
     userConfirmationEntity =
@@ -102,8 +102,8 @@ class UserServiceTest {
   @Test
   void validateCredentials_ShouldReturnValidatedUser() {
     when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
-    when(passwordEncoder.matches("password123", userEntity.getPassword())).thenReturn(true);
-    userEntity.setIsValidated(true);
+    when(passwordEncoder.matches("password123", userEntity.getPassword())).thenReturn(Boolean.TRUE);
+    userEntity.setIsValidated(Boolean.TRUE);
 
     ValidatedUserDto validatedUser =
         userService.validateCredentials(userEntity.getEmail(), "password123");
@@ -116,7 +116,8 @@ class UserServiceTest {
   @Test
   void validateCredentials_WhenInvalidPassword_ShouldThrowUnauthorized() {
     when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
-    when(passwordEncoder.matches("wrongPassword", userEntity.getPassword())).thenReturn(false);
+    when(passwordEncoder.matches("wrongPassword", userEntity.getPassword()))
+        .thenReturn(Boolean.FALSE);
 
     ResponseStatusException exception =
         assertThrows(
@@ -129,7 +130,7 @@ class UserServiceTest {
   @Test
   void validateCredentials_WhenUserNotValidated_ShouldThrowUnauthorized() {
     when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
-    when(passwordEncoder.matches("password123", userEntity.getPassword())).thenReturn(true);
+    when(passwordEncoder.matches("password123", userEntity.getPassword())).thenReturn(Boolean.TRUE);
 
     ResponseStatusException exception =
         assertThrows(
